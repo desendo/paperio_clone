@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5c4b51e72c408c4db2ac691ff2fc98c, type: 3}
+  m_Name: GameSettingsInstaller
+  m_EditorClassIdentifier: 
+  playerSettings:
+    moveSpeed: 0.41
+    turnSpeed: 0.06
+    rotationEpslon: 1.4
+    swipeDeadZoneLenght: 4.1
+  lineSettings:
+    discretizationFactor: 0
+    destroySpeed: 0
+  gameInstallerSettings:
+    playerPrefab: {fileID: 4977536168379241754, guid: 35cf2d71adc67ce4d96e17af0d16ec8e,
+      type: 3}
+    worldRadius: 100
