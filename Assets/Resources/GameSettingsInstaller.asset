@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: GameSettingsInstaller
   m_EditorClassIdentifier: 
   playerSettings:
-    moveSpeed: 0.41
-    turnSpeed: 0.06
+    moveSpeed: 0.12
+    turnSpeed: 0.7
     rotationEpslon: 1.4
-    swipeDeadZoneLenght: 4.1
+    swipeDeadZoneLenght: 0
   gameInstallerSettings:
     playerPrefab: {fileID: 4977536168379241754, guid: 35cf2d71adc67ce4d96e17af0d16ec8e,
       type: 3}
@@ -26,7 +26,7 @@ MonoBehaviour:
   playerZoneSettings:
     meshHeightOffset: -0.1
     initialRadius: 7
-    initialDotsCount: 16
+    initialDotsCount: 20
     defaultMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
   playerLineSettings:
     discretizationFactor: 1

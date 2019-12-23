@@ -42,7 +42,7 @@ namespace Game
                 float lerpFactor = _settings.turnSpeed * frameRateFactor;
 
                 _player.Rotation = Mathf.LerpAngle(_player.Rotation, angle, lerpFactor);
-                _inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
+                //_inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
             }
         }
 

@@ -22,18 +22,12 @@ namespace Game
             _line = line;
         }
 
-        public bool IsDead
-        {
-            get { return _runner.IsDead; }
-        }
+
         public bool IsOutSide
         {
             get { return _runner.IsOutside; }
         }
-        public bool IsCutOf
-        {
-            get { return _runner.IsCutOf; }
-        }
+
         public Vector2 Position
         {
             get { return _runner.Position; }
@@ -45,10 +39,6 @@ namespace Game
         }
         public void OnSpawned(float accuracy, float speed, IMemoryPool pool)
         {
-            Debug.Log("OnSpawned " + name);
-            //_pool = pool;
-            //_tunables.Accuracy = accuracy;
-            //_tunables.Speed = speed;
 
             _registry.AddPlayer(this);
         }

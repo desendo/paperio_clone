@@ -18,22 +18,41 @@ namespace Game
 
         float squaredDeltaPos;
         Vector3 oldPosition;
+
+        bool previousStateIsOutside;
         public void Tick()
         {
 
-            squaredDeltaPos += (_transform.position - oldPosition).sqrMagnitude * Time.deltaTime * Time.deltaTime * 3600f;
-            if (squaredDeltaPos > _settings.squaredDeltaPositionPerDot)
-            {
-                PlaceDot(_transform.position);
-                squaredDeltaPos = 0;
-                
-            }
-            oldPosition = _transform.position;
-        }
+            var isOutside = IsOutside;
 
-        private void PlaceDot(Vector3 pos)
-        {
-            Line.AddDot(pos);
+            if (isOutside)
+                Line.DrawLine();
+
+            if (isOutside && previousStateIsOutside != isOutside)
+            {
+                Debug.Log("out");
+            }
+            if (!isOutside && previousStateIsOutside != isOutside)
+            {
+                Debug.Log("in");
+
+            }
+
+            previousStateIsOutside = isOutside;
+            if (isOutside)
+            {
+                foreach (var item in _renderers)
+                {
+                    item.material.color = Color.red;
+                }
+            }
+            else
+            {
+                foreach (var item in _renderers)
+                {
+                    item.material.color = Color.green;
+                }
+            }
         }
 
         public void Initialize()
@@ -42,8 +61,8 @@ namespace Game
             _renderers = _transform.GetComponentsInChildren<Renderer>();
             _rigidBody = GetComponent<Rigidbody2D>();
             oldPosition = _transform.position;
-
-            Debug.Log("runner Initialize");
+            
+            
             Zone.Initialize();
             Zone.GenerateCirclePolygon();
             Zone.UpdateMesh();
@@ -80,16 +99,13 @@ namespace Game
         }
         public bool IsOutside
         {
-            get; set;
-        }
-        public bool IsCutOf
-        {
-            get; set;
-        }
-        public bool IsDead
-        {
-            get; set;
-        }
+            get
+            {
+                return !Helpers.CheckIfInPolygon(Zone.BorderPointsArray, _transform.position);
+            }
+        }        
+
+
         public Vector2 Position
         {
              get { return _transform.position; }

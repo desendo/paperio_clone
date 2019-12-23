@@ -17,9 +17,11 @@ namespace Game
         public void Tick()
         {
 
-            if (Application.isEditor)
+            if (false)
             {
+#pragma warning disable CS0162 // Обнаружен недостижимый код
                 if (Input.GetKey(KeyCode.A))
+
                     _inputState.totalDelta += Time.deltaTime * new Vector2(-1f, 0) *100f;
                 else if (Input.GetKey(KeyCode.D))
                     _inputState.totalDelta += Time.deltaTime * new Vector2(1f, 0) * 100f;
@@ -29,6 +31,7 @@ namespace Game
                     _inputState.totalDelta += Time.deltaTime * new Vector2(0f, -1f) * 100f;
                 else
                     _inputState.totalDelta = Vector2.zero;
+#pragma warning restore CS0162 // Обнаружен недостижимый код
             }
             else
             {
@@ -44,6 +47,7 @@ namespace Game
                 _inputState.totalDelta += currentTouch.deltaPosition;
             else if(currentTouch.phase != TouchPhase.Stationary)
                 _inputState.totalDelta = Vector2.zero;
+
 
         }
     }

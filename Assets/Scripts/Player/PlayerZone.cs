@@ -9,10 +9,10 @@ namespace Game
     public class PlayerZone 
     {
         [Inject]
-        Settings _settings;
+        Settings _settings = null;
         readonly PlayerFacade _playerFacade;
 
-        private List<Vector2> _lineDots;
+        private List<Vector2> _borderPoints;
         private Mesh mesh;
         private MeshFilter filter;
         private GameObject meshContainer;
@@ -20,18 +20,21 @@ namespace Game
         public PlayerZone(PlayerFacade playerFacade)
         {
             _playerFacade = playerFacade;
-            _lineDots = new List<Vector2>();
+            _borderPoints = new List<Vector2>();
             
         }
         public void Initialize()
         {
             InitComponents();
         }
-        public IEnumerable<Vector2> LineDots
+        public IEnumerable<Vector2> BorderPoints
         {
-            get => _lineDots;            
+            get => _borderPoints;            
         }
-
+        public Vector2[] BorderPointsArray
+        {
+            get => _borderPoints.ToArray();
+        }
         [System.Serializable]
         public class Settings
         {
@@ -59,23 +62,24 @@ namespace Game
             int vertsCount = _settings.initialDotsCount;
             float r = _settings.initialRadius;
             float step = 360f / vertsCount;
+            float phase = Random.value * 360f * 3.1415f;
             for (int i = 0; i < vertsCount; i++)
             {
-                float rad = (i * step) / 180.0f * 3.14f;
+                float rad = (i * step) / 180.0f * 3.1415f + phase;
                 float x = (r * Mathf.Cos(rad ) );
                 float y = (r * Mathf.Sin(rad));
-                _lineDots.Add(new Vector2(x, y));
+                _borderPoints.Add(new Vector2(x, y));
             }            
         }
 
         void UpdateCollider()
         {
-            collider2D.points = _lineDots.ToArray();
+            collider2D.points = _borderPoints.ToArray();
         }
         public void UpdateMesh()
         {
             
-            Vector2[] vertices2D = _lineDots.ToArray();
+            Vector2[] vertices2D = _borderPoints.ToArray();
             Triangulator tr = new Triangulator(vertices2D);
             int[] indices = tr.Triangulate();
 
