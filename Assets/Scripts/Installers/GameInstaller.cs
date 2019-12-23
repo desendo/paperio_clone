@@ -21,7 +21,7 @@ namespace Game
                     .ByNewPrefabInstaller<PlayerInstaller>(_settings.playerPrefab)
                     .UnderTransformGroup("ControlablePlayers"));
 
-
+            /*
             Container.BindFactory<float, float, PlayerFacade, PlayerFacade.BotFactory>()
                 .FromPoolableMemoryPool<float, float, PlayerFacade, BotFacadePool>(poolBinder => poolBinder
                     .WithInitialSize(5)
@@ -29,7 +29,7 @@ namespace Game
                     .ByNewPrefabInstaller<BotInstaller>(_settings.playerPrefab)
                     .UnderTransformGroup("Bots"));
 
-
+            */
 
             Container.BindInterfacesAndSelfTo<ControlablePlayerSpawner>().AsSingle();
 

@@ -16,8 +16,25 @@ namespace Game
 
         public void Tick()
         {
-            if (Input.touchCount > 0)
-                HandleTouches();
+
+            if (Application.isEditor)
+            {
+                if (Input.GetKey(KeyCode.A))
+                    _inputState.totalDelta += Time.deltaTime * new Vector2(-1f, 0) *100f;
+                else if (Input.GetKey(KeyCode.D))
+                    _inputState.totalDelta += Time.deltaTime * new Vector2(1f, 0) * 100f;
+                else if (Input.GetKey(KeyCode.W))
+                    _inputState.totalDelta += Time.deltaTime * new Vector2(0f, 1f) * 100f;
+                else if (Input.GetKey(KeyCode.S))
+                    _inputState.totalDelta += Time.deltaTime * new Vector2(0f, -1f) * 100f;
+                else
+                    _inputState.totalDelta = Vector2.zero;
+            }
+            else
+            {
+                if (Input.touchCount > 0)
+                    HandleTouches();
+            }
 
         }
         void HandleTouches()

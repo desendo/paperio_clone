@@ -10,11 +10,11 @@ namespace Game
     public class PlayerMoveHandler : ITickable,ILateTickable
     {
         readonly Settings _settings;
-        readonly Player _player;
+        readonly PlayerRunner _player;
         readonly InputState _inputState;
 
         private Vector2 currentRotatePoint;
-        public PlayerMoveHandler(Settings settings, Player player, InputState inputState)
+        public PlayerMoveHandler(Settings settings, PlayerRunner player, InputState inputState)
         {
             _settings = settings;
             _player = player;
@@ -35,7 +35,7 @@ namespace Game
 
             if (_inputState.totalDelta.sqrMagnitude > _settings.swipeDeadZoneLenght * _settings.swipeDeadZoneLenght)
                 angle = Mathf.Atan2(_inputState.totalDelta.normalized.y, _inputState.totalDelta.normalized.x) * Mathf.Rad2Deg;
-            Debug.Log(angle);
+            //Debug.Log(angle);
 
             if (Mathf.Abs(_player.Rotation - angle) > _settings.rotationEpslon)
             {

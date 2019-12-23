@@ -2,24 +2,65 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-
+using UniRx;
+using System;
 
 namespace Game
 {
-    public class Player : MonoBehaviour
+    public class PlayerRunner : MonoBehaviour, ITickable,IInitializable
     {
-
+        [Inject]
+        Settings _settings;
         Rigidbody2D _rigidBody;        
         Renderer[] _renderers;
         Transform _transform;
-        private void Awake()
+
+
+        float squaredDeltaPos;
+        Vector3 oldPosition;
+        public void Tick()
+        {
+
+            squaredDeltaPos += (_transform.position - oldPosition).sqrMagnitude * Time.deltaTime * Time.deltaTime * 3600f;
+            if (squaredDeltaPos > _settings.squaredDeltaPositionPerDot)
+            {
+                PlaceDot(_transform.position);
+                squaredDeltaPos = 0;
+                
+            }
+            oldPosition = _transform.position;
+        }
+
+        private void PlaceDot(Vector3 pos)
+        {
+            Line.AddDot(pos);
+        }
+
+        public void Initialize()
         {
             _transform = transform;
             _renderers = _transform.GetComponentsInChildren<Renderer>();
             _rigidBody = GetComponent<Rigidbody2D>();
+            oldPosition = _transform.position;
+
+            Debug.Log("runner Initialize");
+            Zone.Initialize();
+            Zone.GenerateCirclePolygon();
+            Zone.UpdateMesh();
         }
+
         [Inject]
         public PlayerFacade Facade
+        {
+            get; set;
+        }
+        [Inject]
+        public PlayerLine Line
+        {
+            get; set;
+        }
+        [Inject]
+        public PlayerZone Zone
         {
             get; set;
         }
@@ -53,6 +94,11 @@ namespace Game
         {
              get { return _transform.position; }
              set { _transform.position = value; }
+        }
+        [Serializable]
+        public class Settings
+        {
+            public float squaredDeltaPositionPerDot;
         }
     }
 }
