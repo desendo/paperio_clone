@@ -7,34 +7,32 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerZone 
+    public class PlayerZone : IInitializable
     {
         [Inject]
-        Settings _settings;
+        Settings settings;
         [Inject]
-        PlayerZoneView _view;
-
-        readonly PlayerFacade _playerFacade;
-        private List<Vector2> _borderPoints;
+        PlayerZoneView view;
+        [Inject]
+        PlayerZoneService service;
+        readonly PlayerFacade playerFacade;
+        private List<Vector2> borderPoints;
 
         public PlayerZone(PlayerFacade playerFacade)
         {
-            _playerFacade = playerFacade;
-            _borderPoints = new List<Vector2>();
+            this.playerFacade = playerFacade;
+            borderPoints = new List<Vector2>();
             
         }
-        public void Initialize()
-        {
-            _view.InitComponents();
-        }
+
         public List<Vector2> BorderPoints
         {
-            get => _borderPoints;            
-            set => _borderPoints = value;            
+            get => borderPoints;            
+            set => borderPoints = value;            
         }
         public Vector2[] BorderPointsArray
         {
-            get => _borderPoints.ToArray();
+            get => borderPoints.ToArray();
         }
         [System.Serializable]
         public class Settings
@@ -49,17 +47,17 @@ namespace Game
             int[] pair = new int[2];
 
             float sqaredDist = float.PositiveInfinity;
-            for (int i = 0; i < _borderPoints.Count; i++)
+            for (int i = 0; i < borderPoints.Count; i++)
             {
-                float x1 = _borderPoints[i].x;
-                float y1 = _borderPoints[i].y;
+                float x1 = borderPoints[i].x;
+                float y1 = borderPoints[i].y;
 
                 int next = i+1;
-                if (next >= _borderPoints.Count)
+                if (next >= borderPoints.Count)
                     next = 0;
 
-                float x2 = _borderPoints[next].x;
-                float y2 = _borderPoints[next].y;
+                float x2 = borderPoints[next].x;
+                float y2 = borderPoints[next].y;
 
                 float x0 = position.x;
                 float y0 = position.y;
@@ -81,10 +79,10 @@ namespace Game
         {
             float sqaredDist = float.PositiveInfinity;
             int indexOfNearest = -1;
-            for (int i = 0; i < _borderPoints.Count; i++)
+            for (int i = 0; i < borderPoints.Count; i++)
             {
-                float x1 = _borderPoints[i].x;
-                float y1 = _borderPoints[i].y;
+                float x1 = borderPoints[i].x;
+                float y1 = borderPoints[i].y;
 
                 float x2 = position.x;
                 float y2 = position.y;
@@ -99,12 +97,11 @@ namespace Game
             return indexOfNearest;
 
         }
-
-
+        
         public void GenerateCirclePolygon()
         {
-            int vertsCount = _settings.initialDotsCount;
-            float r = _settings.initialRadius;
+            int vertsCount = settings.initialDotsCount;
+            float r = settings.initialRadius;
             float step = 360f / vertsCount;
             float phase = UnityEngine.Random.value * 360f * 3.1415f;
             for (int i = 0; i < vertsCount; i++)
@@ -112,7 +109,7 @@ namespace Game
                 float rad = (i * step) / 180.0f * 3.1415f + phase;
                 float x = (r * Mathf.Cos(rad ) );
                 float y = (r * Mathf.Sin(rad));
-                _borderPoints.Add(new Vector2(x, y));
+                borderPoints.Add(new Vector2(x, y));
             }            
         }
 
@@ -125,9 +122,12 @@ namespace Game
             }
             debugSpheres.Clear();
             int i = 0;
-            foreach (var p in _borderPoints)
+
+
+            foreach (var p in borderPoints)
             {
                 var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                go.transform.parent = playerFacade.transform;
                 go.transform.position = p;
                 go.transform.localScale *= 0.5f;
                 go.name = "b "+i.ToString();
@@ -136,7 +136,13 @@ namespace Game
             }
         }
 
+        public void Initialize()
+        {
 
-
+            GenerateCirclePolygon();
+            view.Initialize();
+            view.UpdateMesh();
+            DrawDebugBorder();
+        }
     }
 }

@@ -4,15 +4,11 @@ namespace Game
 {
     public class Triangulator
     {
-        private List<Vector2> m_points = new List<Vector2>();
+        private static List<Vector2> m_points;
 
-        public Triangulator(Vector2[] points)
+        public static int[] Triangulate(Vector2[] points)
         {
             m_points = new List<Vector2>(points);
-        }
-
-        public int[] Triangulate()
-        {
             List<int> indices = new List<int>();
 
             int n = m_points.Count;
@@ -81,7 +77,7 @@ namespace Game
             return (A * 0.5f);
         }
 
-        private bool Snip(int u, int v, int w, int n, int[] V)
+        private static bool Snip(int u, int v, int w, int n, int[] V)
         {
             int p;
             Vector2 A = m_points[V[u]];
@@ -100,7 +96,7 @@ namespace Game
             return true;
         }
 
-        private bool InsideTriangle(Vector2 A, Vector2 B, Vector2 C, Vector2 P)
+        private static bool InsideTriangle(Vector2 A, Vector2 B, Vector2 C, Vector2 P)
         {
             float ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
             float cCROSSap, bCROSScp, aCROSSbp;

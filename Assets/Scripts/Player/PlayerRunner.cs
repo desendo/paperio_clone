@@ -12,12 +12,14 @@ namespace Game
         [Inject]
         PlayerLine Line;
         [Inject]
-        PlayerZone Zone;
+        PlayerZone homeZone;
         [Inject]
         PlayerZoneView ZoneView;
         [Inject]
         PlayerZoneService ZoneService;
 
+        [Inject]
+        PlayersRegistry playersRegistry;
         Rigidbody2D _rigidBody;        
         Renderer[] _renderers;
         Transform _transform;
@@ -26,7 +28,7 @@ namespace Game
         float squaredDeltaPos;
         Vector3 oldPosition;
 
-        bool previousStateIsOutside;
+        bool wasOutsideHomeZone;
 
         Vector3 exitPoint;
         int exitPointIndex;
@@ -35,23 +37,30 @@ namespace Game
         public void Tick()
         {
 
-            var isOutside = IsOutside;
+            CheckZonesCrossings();
 
-            if (isOutside)
+            var isOutsideHomeZone = IsOutsideHomeZome;
+
+            if (isOutsideHomeZone)
                 Line.DrawLine();
 
-            if (isOutside && previousStateIsOutside != isOutside)
+            foreach (var item in playersRegistry.Zones)
+            {
+                Debug.Log(playersRegistry.Zones.Count);
+            }
+
+            if (isOutsideHomeZone && wasOutsideHomeZone != isOutsideHomeZone)
             {
                 HandleHomeZoneExit();
             }
-            if (!isOutside && previousStateIsOutside != isOutside)
+            if (!isOutsideHomeZone && wasOutsideHomeZone != isOutsideHomeZone)
             {
                 HandleHomeZoneEnter();
 
             }
+            wasOutsideHomeZone = isOutsideHomeZone;
 
-            previousStateIsOutside = isOutside;
-            if (isOutside)
+            if (isOutsideHomeZone)
             {
                 foreach (var item in _renderers)
                 {
@@ -66,15 +75,36 @@ namespace Game
                 }
             }
         }
+
+        private void CheckZonesCrossings()
+        {
+            
+        }
+
         void HandleHomeZoneExit()
         {
-            ZoneService.ExitHomeZone(_transform.position);
-
+            
+            SignalsController.Default.Send(
+            new SignalZoneBorderPass()
+            {
+                playerRunner = this,
+                isExiting = true,
+                zone = homeZone,
+                nearestBorderPointIndex = homeZone.GetNearestBorderPointTo(Position)
+            });
         }
 
         void HandleHomeZoneEnter()
         {
-            ZoneService.EnterHomeZone(_transform.position);
+            SignalsController.Default.Send(
+            new SignalZoneBorderPass()
+            {
+                playerRunner = this,
+                isExiting = false,
+                zone = homeZone,
+                nearestBorderPointIndex = homeZone.GetNearestBorderPointTo(Position)
+            });
+
             ZoneView.UpdateMesh();
             Line.ClearLine();
         }
@@ -86,9 +116,7 @@ namespace Game
             oldPosition = _transform.position;
             
             
-            Zone.Initialize();
-            Zone.GenerateCirclePolygon();
-            ZoneView.UpdateMesh();
+          //  ZoneView.UpdateMesh();
 
         }
 
@@ -96,7 +124,7 @@ namespace Game
         {
             get { return _renderers; }
         }
-        public Vector2 LookDir
+        public Vector3 LookDir
         {
             get { return _rigidBody.transform.right; }
         }
@@ -105,20 +133,25 @@ namespace Game
             get { return _transform.rotation.eulerAngles.z; }
             set { _transform.eulerAngles = new Vector3(_transform.rotation.eulerAngles.x, _transform.rotation.eulerAngles.y,value); }
         }
-        public bool IsOutside
+        public bool IsOutsideHomeZome
         {
             get
             {
-                return !Helpers.CheckIfInPolygon(Zone.BorderPointsArray, _transform.position);
+                return !Helpers.CheckIfInPolygon(homeZone.BorderPointsArray, _transform.position);
             }
-        }        
-
-
-        public Vector2 Position
-        {
-             get { return _transform.position; }
-             set { _transform.position = value; }
         }
 
+        public class ZoneCrossingData
+        {
+            public bool isEntry;
+            public Vector3 position;
+            public PlayerZone zone;
+        }
+
+        public Vector3 Position
+        {
+            get { return _transform.position; }
+            set { _transform.position = value; }
+        }
     }
 }

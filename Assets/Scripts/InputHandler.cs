@@ -17,7 +17,7 @@ namespace Game
         {
 #pragma warning disable CS0162 // Обнаружен недостижимый код
 
-            if (true)
+            if (false)
             {
                 if (Input.GetKey(KeyCode.A))
 

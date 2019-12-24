@@ -21,6 +21,7 @@ namespace Game
         private List<Vector2> _lineDots;
         private float squaredDeltaPos;
         private Vector3 oldPosition;
+        
         public PlayerLine()
         {
             

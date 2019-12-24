@@ -16,10 +16,12 @@ namespace Game
             Container.BindInterfacesTo<InputHandler>().AsSingle();
             Container.Bind<InputState>().AsSingle();
             Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();
-            Container.Bind<PlayerLine>().AsSingle();
-            Container.Bind<PlayerZone>().AsSingle();
-            Container.Bind<PlayerZoneService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerZone>().AsSingle();
             Container.Bind<PlayerZoneView>().AsSingle();
+            Container.Bind<PlayerLine>().AsSingle();
+            
+            Container.Bind<PlayerZoneService>().AsSingle();
+            
 
 
         }

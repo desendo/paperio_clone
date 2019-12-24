@@ -23,22 +23,6 @@ namespace Game
             _zone = zone;
             _line = line;
         }
-
-
-        public bool IsOutSide
-        {
-            get { return _runner.IsOutside; }
-        }
-
-        public Vector2 Position
-        {
-            get { return _runner.Position; }
-            set { _runner.Position = value; }
-        }
-        public float Rotation
-        {
-            get { return _runner.Rotation; }
-        }
         public void OnSpawned(float accuracy, float speed, IMemoryPool pool)
         {
 
@@ -53,7 +37,14 @@ namespace Game
         public void Dispose()
         {
         }
-
+        public PlayerZone Zone
+        {
+            get => _zone;
+        }
+        public PlayerLine Line
+        {
+            get => _line;
+        }
         public class PlayerFactory : PlaceholderFactory<float, float, PlayerFacade>
         {
         }
