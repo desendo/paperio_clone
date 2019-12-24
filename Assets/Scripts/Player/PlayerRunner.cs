@@ -8,9 +8,16 @@ using System;
 namespace Game
 {
     public class PlayerRunner : MonoBehaviour, ITickable,IInitializable
-    {
+    {        
         [Inject]
-        Settings _settings;
+        PlayerLine Line;
+        [Inject]
+        PlayerZone Zone;
+        [Inject]
+        PlayerZoneView ZoneView;
+        [Inject]
+        PlayerZoneService ZoneService;
+
         Rigidbody2D _rigidBody;        
         Renderer[] _renderers;
         Transform _transform;
@@ -20,6 +27,11 @@ namespace Game
         Vector3 oldPosition;
 
         bool previousStateIsOutside;
+
+        Vector3 exitPoint;
+        int exitPointIndex;
+        Vector3 entryPoint;
+        int enterPointIndex;
         public void Tick()
         {
 
@@ -30,11 +42,11 @@ namespace Game
 
             if (isOutside && previousStateIsOutside != isOutside)
             {
-                Debug.Log("out");
+                HandleHomeZoneExit();
             }
             if (!isOutside && previousStateIsOutside != isOutside)
             {
-                Debug.Log("in");
+                HandleHomeZoneEnter();
 
             }
 
@@ -54,7 +66,18 @@ namespace Game
                 }
             }
         }
+        void HandleHomeZoneExit()
+        {
+            ZoneService.ExitHomeZone(_transform.position);
 
+        }
+
+        void HandleHomeZoneEnter()
+        {
+            ZoneService.EnterHomeZone(_transform.position);
+            ZoneView.UpdateMesh();
+            Line.ClearLine();
+        }
         public void Initialize()
         {
             _transform = transform;
@@ -65,24 +88,10 @@ namespace Game
             
             Zone.Initialize();
             Zone.GenerateCirclePolygon();
-            Zone.UpdateMesh();
+            ZoneView.UpdateMesh();
+
         }
 
-        [Inject]
-        public PlayerFacade Facade
-        {
-            get; set;
-        }
-        [Inject]
-        public PlayerLine Line
-        {
-            get; set;
-        }
-        [Inject]
-        public PlayerZone Zone
-        {
-            get; set;
-        }
         public Renderer[] Renderers
         {
             get { return _renderers; }
@@ -91,7 +100,6 @@ namespace Game
         {
             get { return _rigidBody.transform.right; }
         }
-
         public float Rotation
         {
             get { return _transform.rotation.eulerAngles.z; }
@@ -111,10 +119,6 @@ namespace Game
              get { return _transform.position; }
              set { _transform.position = value; }
         }
-        [Serializable]
-        public class Settings
-        {
-            public float squaredDeltaPositionPerDot;
-        }
+
     }
 }

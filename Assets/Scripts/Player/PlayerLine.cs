@@ -10,30 +10,55 @@ namespace Game
     public class PlayerLine 
     {
         [Inject]
-        Settings _settings = null;
+        GameSettingsInstaller.DebugSettings _debug;
         [Inject]
-        PlayerRunner _playerRunner = null;
-        readonly PlayerFacade _playerFacade;
+        Settings _settings;
+        [Inject]
+        PlayerRunner _playerRunner;
+        [Inject]
+        PlayerFacade _playerFacade;
 
         private List<Vector2> _lineDots;
         private float squaredDeltaPos;
         private Vector3 oldPosition;
-        public PlayerLine(PlayerFacade playerFacade)
+        public PlayerLine()
         {
-            _playerFacade = playerFacade;
+            
             _lineDots = new List<Vector2>() ;
         }
 
-        public IEnumerable<Vector2> LineDots
+        public List<Vector2> LineDots
         {
             get => _lineDots;            
         }
-
+        public Vector2[] LineDotsArray
+        {
+            get => _lineDots.ToArray();
+        }
+        private List<GameObject> dashes = new List<GameObject>();
         void AddDot(Vector3 pos)
         {
+            
             _lineDots.Add(pos);
+            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            go.transform.position = pos;
+            go.transform.localScale *= 0.1f;
+            go.GetComponent<MeshRenderer>().material = _debug.debugMaterial;
+            dashes.Add(go);
+            go.name = "dash " + j;
+            j++;
         }
-
+        int j = 0;
+        public void ClearLine()
+        {
+            j = 0;
+            foreach (var item in dashes)
+            {
+                GameObject.Destroy(item);
+            }
+            _lineDots.Clear();
+            dashes.Clear();
+        }
         public void DrawLine()
         {
             Vector3 position = _playerRunner.Position ;

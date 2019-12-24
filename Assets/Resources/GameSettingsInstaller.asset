@@ -21,13 +21,14 @@ MonoBehaviour:
     playerPrefab: {fileID: 4977536168379241754, guid: 35cf2d71adc67ce4d96e17af0d16ec8e,
       type: 3}
     worldRadius: 100
-  playerRunnerSettings:
-    squaredDeltaPositionPerDot: 1
   playerZoneSettings:
-    meshHeightOffset: -0.1
     initialRadius: 7
-    initialDotsCount: 20
+    initialDotsCount: 50
+  playerZoneViewSettings:
+    meshHeightOffset: -0.01
     defaultMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
   playerLineSettings:
-    discretizationFactor: 1
+    squaredUnitsPerDotPerFrame: 0.001
     destroySpeed: 2
+  debug:
+    debugMaterial: {fileID: 2100000, guid: ad81a5d60d606484f9997a5a910c7103, type: 2}

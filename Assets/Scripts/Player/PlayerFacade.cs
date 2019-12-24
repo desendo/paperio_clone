@@ -8,8 +8,10 @@ namespace Game
 {
     public class PlayerFacade : MonoBehaviour, IPoolable<float, float, IMemoryPool>, IDisposable
     {
+
         PlayerRunner _runner;
         PlayerZone _zone;
+        
         PlayerLine _line;
         PlayersRegistry _registry;
 
@@ -42,10 +44,7 @@ namespace Game
 
             _registry.AddPlayer(this);
         }
-        public IEnumerable<Vector2> Line
-        {
-            get { return _line.LineDots; }
-        }
+
         public void OnDespawned()
         {
             _registry.RemovePlayer(this);

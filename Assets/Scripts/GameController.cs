@@ -7,6 +7,8 @@ namespace Game
 {
     public class GameController : IInitializable, ITickable, IDisposable
     {
+        [Inject]
+        ControlablePlayerSpawner _playerSpawner;
         public void Dispose()
         {
 
@@ -14,7 +16,7 @@ namespace Game
 
         public void Initialize()
         {
-
+            _playerSpawner.SpawnPlayer();
         }
 
         public void Tick()

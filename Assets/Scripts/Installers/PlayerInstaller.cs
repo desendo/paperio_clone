@@ -18,6 +18,8 @@ namespace Game
             Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();
             Container.Bind<PlayerLine>().AsSingle();
             Container.Bind<PlayerZone>().AsSingle();
+            Container.Bind<PlayerZoneService>().AsSingle();
+            Container.Bind<PlayerZoneView>().AsSingle();
 
 
         }

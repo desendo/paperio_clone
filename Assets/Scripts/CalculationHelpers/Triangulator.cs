@@ -20,7 +20,7 @@ namespace Game
                 return indices.ToArray();
 
             int[] V = new int[n];
-            if (Area() > 0)
+            if (Area(m_points) > 0)
             {
                 for (int v = 0; v < n; v++)
                     V[v] = v;
@@ -68,7 +68,7 @@ namespace Game
             return indices.ToArray();
         }
 
-        private float Area()
+        public static float Area(List<Vector2> m_points)
         {
             int n = m_points.Count;
             float A = 0.0f;
