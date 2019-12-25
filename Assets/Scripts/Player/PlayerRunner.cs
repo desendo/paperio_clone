@@ -7,22 +7,16 @@ using System;
 
 namespace Game
 {
-    public class PlayerRunner : MonoBehaviour, ITickable,IInitializable
+    public class PlayerRunner :  ITickable,IInitializable
     {        
-        [Inject]
-        PlayerLine Line;
-        [Inject]
-        PlayerZone homeZone;
-        [Inject]
-        PlayerZoneView ZoneView;
-        [Inject]
+        
+        PlayerLine line;
+        PlayerRunnerView view;        
+        PlayerZone homeZone;        
+        PlayerZoneView ZoneView;        
         PlayerZoneService ZoneService;
-
         [Inject]
         PlayersRegistry playersRegistry;
-        Rigidbody2D _rigidBody;        
-        Renderer[] _renderers;
-        Transform _transform;
 
 
         float squaredDeltaPos;
@@ -34,15 +28,40 @@ namespace Game
         int exitPointIndex;
         Vector3 entryPoint;
         int enterPointIndex;
+
+        [Inject]
+        public void Construct
+        (
+            PlayerLine line,
+            PlayerRunnerView view,
+            PlayerZone homeZone,
+            PlayerZoneView ZoneView,
+            PlayerZoneService ZoneService
+        )
+        {
+            this.line = line;
+            this.view = view;
+            this.homeZone = homeZone;
+            this.ZoneView = ZoneView;
+            this.ZoneService = ZoneService;
+
+            Debug.Log("PlayerRunner constructor");
+            var clickStream = Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0));
+
+            clickStream.Buffer(clickStream.Throttle(TimeSpan.FromMilliseconds(250)))
+            .Where(xs => xs.Count >= 2)
+            .Subscribe(xs => Debug.Log("DoubleClick Detected! Count:" + xs.Count));
+        }
         public void Tick()
         {
-
+            Debug.Log("player runner tick");
             CheckZonesCrossings();
 
             var isOutsideHomeZone = IsOutsideHomeZome;
 
-            if (isOutsideHomeZone)
-                Line.DrawLine();
+            if (isOutsideHomeZone && !line.LineDrawEnabled)
+                line.DrawLine();
 
             foreach (var item in playersRegistry.Zones)
             {
@@ -60,20 +79,12 @@ namespace Game
             }
             wasOutsideHomeZone = isOutsideHomeZone;
 
-            if (isOutsideHomeZone)
-            {
-                foreach (var item in _renderers)
-                {
-                    item.material.color = Color.red;
-                }
-            }
-            else
-            {
-                foreach (var item in _renderers)
-                {
-                    item.material.color = Color.green;
-                }
-            }
+
+        }
+        bool _cutoff;
+        internal void CutOff()
+        {
+            _cutoff = true;
         }
 
         private void CheckZonesCrossings()
@@ -90,7 +101,7 @@ namespace Game
 
         void HandleHomeZoneExit()
         {
-            Debug.Log("exit zone");
+            
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
@@ -99,12 +110,12 @@ namespace Game
                 zone = homeZone,
                 nearestBorderPointIndex = homeZone.GetNearestBorderPointTo(Position)
             });
+            
         }
 
         void HandleHomeZoneEnter()
         {
 
-            Debug.Log("enter zone");
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
@@ -115,48 +126,39 @@ namespace Game
             });
 
             ZoneView.UpdateMesh();
-            Line.ClearLine();
+            line.ClearLine();
+
+            //Debug.Log("площадб "+homeZone.Area());
         }
         public void Initialize()
         {
-            _transform = transform;
-            _renderers = _transform.GetComponentsInChildren<Renderer>();
-            _rigidBody = GetComponent<Rigidbody2D>();
-            oldPosition = _transform.position;
+
+            oldPosition =Vector3.zero;
             
             
-          //  ZoneView.UpdateMesh();
 
-        }
-
-        public Renderer[] Renderers
-        {
-            get { return _renderers; }
         }
         public Vector3 LookDir
         {
-            get { return _rigidBody.transform.right; }
+            get { return view.LookDir; }
         }
         public float Rotation
         {
-            get { return _transform.rotation.eulerAngles.z; }
-            set { _transform.eulerAngles = new Vector3(_transform.rotation.eulerAngles.x, _transform.rotation.eulerAngles.y,value); }
+            get { return view.Rotation; }
+            set { view.Rotation = value; }
         }
         public bool IsOutsideHomeZome
         {
             get
             {
-                return !Helpers.CheckIfInPolygon(homeZone.BorderPointsArray, _transform.position);
+                return !Helpers.CheckIfInPolygon(homeZone.BorderPointsList, Position);
             }
         }
         public Vector3 Position
         {
-            get { return _transform.position; }
-            set { _transform.position = value; }
+            get { return view.Position; }
+            set { view.Position = value; }
         }
-
-
-
 
     }
 }

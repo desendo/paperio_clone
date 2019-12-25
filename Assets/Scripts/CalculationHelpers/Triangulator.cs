@@ -6,7 +6,7 @@ namespace Game
     {
         private static List<Vector2> m_points;
 
-        public static int[] Triangulate(Vector2[] points)
+        public static int[] Triangulate(List<Vector2> points)
         {
             m_points = new List<Vector2>(points);
             List<int> indices = new List<int>();

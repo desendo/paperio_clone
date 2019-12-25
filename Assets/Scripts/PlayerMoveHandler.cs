@@ -10,11 +10,11 @@ namespace Game
     public class PlayerMoveHandler : ITickable,ILateTickable
     {
         readonly Settings _settings;
-        readonly PlayerRunner _player;
+        readonly PlayerRunnerView _player;
         readonly InputState _inputState;
 
         private Vector2 currentRotatePoint;
-        public PlayerMoveHandler(Settings settings, PlayerRunner player, InputState inputState)
+        public PlayerMoveHandler(Settings settings, PlayerRunnerView player, InputState inputState)
         {
             _settings = settings;
             _player = player;

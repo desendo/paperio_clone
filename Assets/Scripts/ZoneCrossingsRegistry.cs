@@ -12,9 +12,9 @@ namespace Game
 
     public class ZoneCrossingsRegistry
     {        
-        readonly Dictionary<PlayerRunner, ZoneCrossingData> crossingDataDictionary = new Dictionary<PlayerRunner, ZoneCrossingData>();        
+        readonly Dictionary<PlayerRunnerView, ZoneCrossingData> crossingDataDictionary = new Dictionary<PlayerRunnerView, ZoneCrossingData>();        
         
-        public void AddCross(PlayerRunner runner)
+        public void AddCross(PlayerRunnerView runner)
         {
 
         }

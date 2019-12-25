@@ -13,7 +13,7 @@ namespace Game
         [Inject]
         PlayerZone zone;
         [Inject]
-        PlayerRunner runner;
+        PlayerRunnerView runner;
         [Inject]
         PlayerLine line;
 
@@ -25,23 +25,14 @@ namespace Game
         {
             SignalsController.Default.Remove(this);
         }
-        internal void ExitHomeZone()
-        {
-
-            //    Debug.Log("ExitHomeZone ");
-
-        }
-
-        internal void EnterHomeZone()
-        {
-
-            if (line.LineDots.Count < 2) return;
-                 Add(line.LineDots);
+        private void EnterHomeZone()
+        {            
+            AddToZone(line.LineDots);           
 
         }
-        public void Add(List<Vector2> line)
+        private void AddToZone(List<Vector2> line)
         {
-            bool isBorderClockwise = Triangulator.Area(zone.BorderPoints) < 0;
+            bool isBorderClockwise = Triangulator.Area(zone.BorderPointsList) < 0;
             bool isLineClockWise = Triangulator.Area(line) < 0;
 
             List<Vector2> zonePart1 = new List<Vector2>();
@@ -62,31 +53,31 @@ namespace Game
             
             List<Vector2> zonePart2_1 = new List<Vector2>();
             List<Vector2> zonePart2_2 = new List<Vector2>();
-            for (int i = 0; i < zone.BorderPoints.Count; i++)
+            for (int i = 0; i < zone.BorderPointsList.Count; i++)
             {
                 if (i >= i1 && i <= i2)
                 {
-                    zonePart1.Add(zone.BorderPoints[i]);
+                    zonePart1.Add(zone.BorderPointsList[i]);
                 }
                 if (i <= i1)
                 {
-                    zonePart2_1.Add(zone.BorderPoints[i]);
+                    zonePart2_1.Add(zone.BorderPointsList[i]);
                 }
                 if (i >= i2)
                 {
-                    zonePart2_2.Add(zone.BorderPoints[i]);
+                    zonePart2_2.Add(zone.BorderPointsList[i]);
                 }
             }
 
             zonePart2_2.AddRange(zonePart2_1);
             zonePart2 = zonePart2_2;
 
-            if (zonePart1[0] == zone.BorderPoints[homeExit])
+            if (zonePart1[0] == zone.BorderPointsList[homeExit])
                 zonePart1.AddRange(copyLineReversed);
             else
                 zonePart1.AddRange(copyLineNormal);
 
-            if (zonePart2[0] == zone.BorderPoints[homeExit])            
+            if (zonePart2[0] == zone.BorderPointsList[homeExit])            
                 zonePart2.AddRange(copyLineReversed);            
             else
                 zonePart2.AddRange(copyLineNormal);
@@ -94,9 +85,9 @@ namespace Game
             float z1 = Triangulator.Area(zonePart1);
             float z2 = Triangulator.Area(zonePart2);
             if (Mathf.Abs(z1) > Mathf.Abs(z2)) 
-                zone.BorderPoints = zonePart1;            
+                zone.BorderPointsList = zonePart1;            
             else 
-                zone.BorderPoints = zonePart2;
+                zone.BorderPointsList = zonePart2;
 
         }
         int homeEntry;
@@ -108,7 +99,6 @@ namespace Game
                 if (arg.isExiting)
                 {
                     homeExit = arg.nearestBorderPointIndex;
-                    ExitHomeZone();
                 }
                 else
                 {

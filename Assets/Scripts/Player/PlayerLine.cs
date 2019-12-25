@@ -7,58 +7,39 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerLine 
+    public class PlayerLine :ITickable
     {
         [Inject]
         GameSettingsInstaller.DebugSettings _debug;
         [Inject]
         Settings _settings;
         [Inject]
-        PlayerRunner _playerRunner;
+        LineCrossingController lineCrossingController;
         [Inject]
-        PlayerFacade _playerFacade;
+        public PlayerFacade PlayerFacade { get; }
 
-        private List<Vector2> _lineDots;
+        readonly PlayerRunnerView _playerRunner;
+        
+        private List<Vector2> _lineDots = new List<Vector2>() ;
         private float squaredDeltaPos;
         private Vector3 oldPosition;
-        
-        public PlayerLine()
-        {
-            
-            _lineDots = new List<Vector2>() ;
-        }
 
         public List<Vector2> LineDots
         {
             get => _lineDots;            
         }
-        public Vector2[] LineDotsArray
-        {
-            get => _lineDots.ToArray();
-        }
-        private List<GameObject> dashes = new List<GameObject>();
+        public bool LineDrawEnabled { get; internal set; }
+        
         void AddDot(Vector3 pos)
         {
             
             _lineDots.Add(pos);
-            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            go.transform.position = pos;
-            go.transform.localScale *= 0.1f;
-            go.GetComponent<MeshRenderer>().material = _debug.debugMaterial;
-            dashes.Add(go);
-            go.name = "dash " + j;
-            j++;
+            lineCrossingController.DotAdded(this);                
+
         }
-        int j = 0;
         public void ClearLine()
         {
-            j = 0;
-            foreach (var item in dashes)
-            {
-                GameObject.Destroy(item);
-            }
             _lineDots.Clear();
-            dashes.Clear();
         }
         public void DrawLine()
         {
@@ -71,6 +52,12 @@ namespace Game
                 squaredDeltaPos = 0;
             }
             oldPosition = position;
+        }
+
+        public void Tick()
+        {
+            if (LineDrawEnabled)
+                DrawLine();
         }
 
         [System.Serializable]

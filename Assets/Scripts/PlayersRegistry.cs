@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using UnityEngine;
 namespace Game
 {
     public class PlayersRegistry
@@ -7,9 +7,17 @@ namespace Game
         readonly List<PlayerFacade> _players = new List<PlayerFacade>();
         readonly List<PlayerZone> _zones = new List<PlayerZone>();
         readonly List<PlayerLine> _lines = new List<PlayerLine>();
-        
 
-        public IEnumerable<PlayerFacade> Players
+        public PlayersRegistry()
+        {
+            Debug.Log("PlayersRegistry called");
+
+        }
+        public List<PlayerLine> Lines
+        {
+            get { return _lines; }
+        }
+        public IEnumerable<PlayerFacade> PlayerFacades
         {
             get { return _players; }
         }

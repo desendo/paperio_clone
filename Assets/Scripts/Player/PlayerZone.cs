@@ -11,34 +11,34 @@ namespace Game
     {
         [Inject]
         Settings settings;
-        [Inject]
-        PlayerZoneView view;
-        [Inject]
-        PlayerZoneService service;
-        readonly PlayerFacade playerFacade;
-        
+
+        private PlayerZoneView view;
+        private PlayerZoneService service;        
         private List<Vector2> borderPoints;
 
-        
-        public PlayerZone(PlayerFacade playerFacade)
+        [Inject]
+        public void Construct(PlayerZoneView view, PlayerZoneService service)
         {
-            this.playerFacade = playerFacade;
+            this.view = view;
+            this.service = service;
             borderPoints = new List<Vector2>();
-            
         }
+        
+        public float Area()
+        {
+            return Mathf.Abs(Triangulator.Area(BorderPointsList));
+        }
+        
         public bool IsInZone(Vector3 position)
         {
-            return Helpers.CheckIfInPolygon(BorderPointsArray, position);
+            return Helpers.CheckIfInPolygon(BorderPointsList, position);
         }
-        public List<Vector2> BorderPoints
+        public List<Vector2> BorderPointsList
         {
             get => borderPoints;            
             set => borderPoints = value;            
         }
-        public Vector2[] BorderPointsArray
-        {
-            get => borderPoints.ToArray();
-        }
+
         [System.Serializable]
         public class Settings
         {
@@ -111,8 +111,7 @@ namespace Game
             int vertsCount = settings.initialDotsCount;
             float r = settings.initialRadius;
             float step = 360f / vertsCount;
-            //float phase = UnityEngine.Random.value * 360f * 3.1415f;
-            float phase =0.001f;
+            float phase = UnityEngine.Random.value * 360f * 3.1415f;
             for (int i = 0; i < vertsCount; i++)
             {
                 float rad = (i * step) / 180.0f * 3.1415f + phase;
@@ -120,35 +119,6 @@ namespace Game
                 float y = (r * Mathf.Sin(rad));
                 borderPoints.Add(new Vector2(x, y));
             }            
-        }
-
-        List<GameObject> debugSpheres= new List<GameObject>();
-        internal void DrawDebugBorder()
-        {
-            foreach (var item in debugSpheres)
-            {
-                GameObject.Destroy(item);
-            }
-            debugSpheres.Clear();
-            int i = 0;
-
-
-            foreach (var p in borderPoints)
-            {
-                var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                go.transform.parent = playerFacade.transform;
-                go.transform.position = p;
-                go.transform.localScale *= 0.5f;
-                go.name = "b "+i.ToString();
-                if (i == 0)
-                    go.GetComponent<MeshRenderer>().material = settings.debugFirstPoint;
-                else if (i == 1)
-                    go.GetComponent<MeshRenderer>().material = settings.debugSecondPoint;
-                else
-                    go.GetComponent<MeshRenderer>().material = settings.debugOtherPoints;
-                debugSpheres.Add(go);
-                i++;
-            }
         }
 
         public void Initialize()

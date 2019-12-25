@@ -10,8 +10,6 @@ namespace Game
         public PlayerZone zone;
         public bool isExiting;
         public int nearestBorderPointIndex;
-
-
     }
 
 }

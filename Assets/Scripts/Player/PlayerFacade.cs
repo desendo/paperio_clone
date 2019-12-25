@@ -9,14 +9,18 @@ namespace Game
     public class PlayerFacade : MonoBehaviour, IPoolable<float, float, IMemoryPool>, IDisposable
     {
 
-        PlayerRunner _runner;
-        PlayerZone _zone;
-        
+        PlayerRunnerView _runner;
+        PlayerZone _zone;        
         PlayerLine _line;
         PlayersRegistry _registry;
+        IMemoryPool _pool;
 
         [Inject]
-        public void Construct(PlayerRunner player, PlayersRegistry playersRegistry, PlayerLine line, PlayerZone zone)
+        public void Construct(
+            PlayerRunnerView player,
+            PlayersRegistry playersRegistry,
+            PlayerLine line,
+            PlayerZone zone)
         {
             _runner = player;            
             _registry = playersRegistry;
@@ -25,7 +29,7 @@ namespace Game
         }
         public void OnSpawned(float accuracy, float speed, IMemoryPool pool)
         {
-
+            _pool = pool;
             _registry.AddPlayer(this);
         }
 
@@ -36,11 +40,24 @@ namespace Game
 
         public void Dispose()
         {
+            
         }
+        public void Die()
+        {
+            Debug.Log("Die");
+            _pool.Despawn(this);
+        }
+
         public PlayerZone Zone
         {
             get => _zone;
         }
+
+        public void CutOff()
+        {
+           // _runner.CutOff();
+        }
+
         public PlayerLine Line
         {
             get => _line;

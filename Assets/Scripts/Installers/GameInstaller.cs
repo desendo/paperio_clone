@@ -34,8 +34,9 @@ namespace Game
             Container.BindInterfacesAndSelfTo<ControlablePlayerSpawner>().AsSingle();
 
             //Container.BindInterfacesAndSelfTo<BotSpawner>().AsSingle();
-
+            Container.Bind<LineCrossingController>().AsSingle();
             Container.Bind<PlayersRegistry>().AsSingle();
+            
 
         }
         [Serializable]
