@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: GameSettingsInstaller
   m_EditorClassIdentifier: 
   playerSettings:
-    moveSpeed: 0.12
-    turnSpeed: 0.07
+    moveSpeed: 0.1
+    turnSpeed: 0.12
     rotationEpslon: 1.22
     swipeDeadZoneLenght: 0
   gameInstallerSettings:
@@ -24,6 +24,9 @@ MonoBehaviour:
   playerZoneSettings:
     initialRadius: 7
     initialDotsCount: 50
+    debugFirstPoint: {fileID: 2100000, guid: e475b5eab05d89040ac9618e72ffb150, type: 2}
+    debugSecondPoint: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}
+    debugOtherPoints: {fileID: 2100000, guid: fd8fac601ff7cfc48b4d4a7f9fad9a68, type: 2}
   playerZoneViewSettings:
     zoneMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
     height: -0.01

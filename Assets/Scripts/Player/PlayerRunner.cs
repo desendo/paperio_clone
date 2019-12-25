@@ -46,7 +46,7 @@ namespace Game
 
             foreach (var item in playersRegistry.Zones)
             {
-                Debug.Log(playersRegistry.Zones.Count);
+              //  Debug.Log(playersRegistry.Zones.Count);
             }
 
             if (isOutsideHomeZone && wasOutsideHomeZone != isOutsideHomeZone)
@@ -78,12 +78,19 @@ namespace Game
 
         private void CheckZonesCrossings()
         {
-            
+            foreach (var zoneToCheck in playersRegistry.Zones)
+            {
+
+                if (zoneToCheck.IsInZone(Position))
+                {
+
+                }
+            }
         }
 
         void HandleHomeZoneExit()
         {
-            
+            Debug.Log("exit zone");
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
@@ -96,6 +103,8 @@ namespace Game
 
         void HandleHomeZoneEnter()
         {
+
+            Debug.Log("enter zone");
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
@@ -140,18 +149,14 @@ namespace Game
                 return !Helpers.CheckIfInPolygon(homeZone.BorderPointsArray, _transform.position);
             }
         }
-
-        public class ZoneCrossingData
-        {
-            public bool isEntry;
-            public Vector3 position;
-            public PlayerZone zone;
-        }
-
         public Vector3 Position
         {
             get { return _transform.position; }
             set { _transform.position = value; }
         }
+
+
+
+
     }
 }

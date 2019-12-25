@@ -38,6 +38,9 @@ namespace Game
             _mesh.RecalculateBounds();
 
             _meshFilter.mesh = _mesh;
+
+            _playerZone.DrawDebugBorder();
+
         }
         GameObject PlayerZoneViewContainer;
         public void Initialize()

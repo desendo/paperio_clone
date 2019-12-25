@@ -16,15 +16,20 @@ namespace Game
         [Inject]
         PlayerZoneService service;
         readonly PlayerFacade playerFacade;
+        
         private List<Vector2> borderPoints;
 
+        
         public PlayerZone(PlayerFacade playerFacade)
         {
             this.playerFacade = playerFacade;
             borderPoints = new List<Vector2>();
             
         }
-
+        public bool IsInZone(Vector3 position)
+        {
+            return Helpers.CheckIfInPolygon(BorderPointsArray, position);
+        }
         public List<Vector2> BorderPoints
         {
             get => borderPoints;            
@@ -40,6 +45,9 @@ namespace Game
          
             public float initialRadius;
             public int initialDotsCount;
+            public Material debugFirstPoint;
+            public Material debugSecondPoint;
+            public Material debugOtherPoints;
             
         }
         public int[] GetNearestBorderEdgeTo(Vector3 position)
@@ -103,7 +111,8 @@ namespace Game
             int vertsCount = settings.initialDotsCount;
             float r = settings.initialRadius;
             float step = 360f / vertsCount;
-            float phase = UnityEngine.Random.value * 360f * 3.1415f;
+            //float phase = UnityEngine.Random.value * 360f * 3.1415f;
+            float phase =0.001f;
             for (int i = 0; i < vertsCount; i++)
             {
                 float rad = (i * step) / 180.0f * 3.1415f + phase;
@@ -131,6 +140,12 @@ namespace Game
                 go.transform.position = p;
                 go.transform.localScale *= 0.5f;
                 go.name = "b "+i.ToString();
+                if (i == 0)
+                    go.GetComponent<MeshRenderer>().material = settings.debugFirstPoint;
+                else if (i == 1)
+                    go.GetComponent<MeshRenderer>().material = settings.debugSecondPoint;
+                else
+                    go.GetComponent<MeshRenderer>().material = settings.debugOtherPoints;
                 debugSpheres.Add(go);
                 i++;
             }
@@ -142,7 +157,6 @@ namespace Game
             GenerateCirclePolygon();
             view.Initialize();
             view.UpdateMesh();
-            DrawDebugBorder();
         }
     }
 }
