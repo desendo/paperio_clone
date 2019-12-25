@@ -9,6 +9,8 @@ namespace Game
     {
         [Inject]
         ControlablePlayerSpawner _playerSpawner;
+        [Inject]
+        BotSpawner _botSpawner;
         public void Dispose()
         {
 
@@ -16,7 +18,8 @@ namespace Game
 
         public void Initialize()
         {
-            _playerSpawner.SpawnPlayer();
+            _playerSpawner.SpawnPlayer( new Vector3(10,10,0));
+            _botSpawner.SpawnBot(new Vector3(4, 4, 0));
         }
 
         public void Tick()

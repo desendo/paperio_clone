@@ -22,7 +22,7 @@ MonoBehaviour:
       type: 3}
     worldRadius: 100
   playerZoneSettings:
-    initialRadius: 2
+    initialRadius: 4
     initialDotsCount: 26
     debugFirstPoint: {fileID: 2100000, guid: e475b5eab05d89040ac9618e72ffb150, type: 2}
     debugSecondPoint: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}
@@ -31,7 +31,7 @@ MonoBehaviour:
     zoneMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
     height: -0.01
   playerLineSettings:
-    squaredUnitsPerDotPerFrame: 0.0015
+    squaredUnitsPerDotPerFrame: 0.0005
     destroySpeed: 2
     lineMaterial: {fileID: 2100000, guid: 6818599dfaf7444438e16170e09d053a, type: 2}
     width: 0.5

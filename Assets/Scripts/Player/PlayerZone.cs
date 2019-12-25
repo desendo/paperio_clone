@@ -11,7 +11,8 @@ namespace Game
     {
         [Inject]
         Settings settings;
-
+        [Inject]
+        private PlayerFacade facade;
         private PlayerZoneView view;
         private PlayerZoneService service;        
         private List<Vector2> borderPoints;
@@ -29,10 +30,9 @@ namespace Game
             return Mathf.Abs(Triangulator.Area(BorderPointsList));
         }
         
-        public bool IsInZone(Vector3 position)
-        {
-            return Helpers.CheckIfInPolygon(BorderPointsList, position);
-        }
+       // public bool IsInZone(Vector3 position)        
+       //     return Helpers.CheckIfInPolygon(BorderPointsList, position);
+        
         public List<Vector2> BorderPointsList
         {
             get => borderPoints;            
@@ -117,7 +117,7 @@ namespace Game
                 float rad = (i * step) / 180.0f * 3.1415f + phase;
                 float x = (r * Mathf.Cos(rad ) );
                 float y = (r * Mathf.Sin(rad));
-                borderPoints.Add(new Vector2(x, y));
+                borderPoints.Add(new Vector2(x, y) + facade.Position2D);
             }            
         }
 

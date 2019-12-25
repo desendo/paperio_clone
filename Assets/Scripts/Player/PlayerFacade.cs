@@ -6,13 +6,14 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerFacade : MonoBehaviour, IPoolable<float, float, IMemoryPool>, IDisposable
+    public class PlayerFacade : MonoBehaviour, IPoolable<Vector3, float, IMemoryPool>, IDisposable
     {
 
         PlayerRunner _runner;
-        PlayerZone _zone;        
+        PlayerZone _zone;
         PlayerLine _line;
         PlayersRegistry _registry;
+
         IMemoryPool _pool;
 
         [Inject]
@@ -22,14 +23,15 @@ namespace Game
             PlayerLine line,
             PlayerZone zone)
         {
-            _runner = player;            
+            _runner = player;
             _registry = playersRegistry;
             _zone = zone;
             _line = line;
         }
-        public void OnSpawned(float accuracy, float speed, IMemoryPool pool)
+        public void OnSpawned(Vector3 position, float speed, IMemoryPool pool)
         {
             _pool = pool;
+            transform.position = position;
             _registry.AddPlayer(this);
         }
 
@@ -40,7 +42,7 @@ namespace Game
 
         public void Dispose()
         {
-            
+
         }
         public void Die()
         {
@@ -52,7 +54,14 @@ namespace Game
         {
             get => _zone;
         }
-
+        public Vector2 Position2D
+        {
+            get => transform.position;
+        }
+        public Vector3 Position
+        {
+            get => transform.position;
+        }
         public void CutOff()
         {
            // _runner.CutOff();
@@ -62,10 +71,10 @@ namespace Game
         {
             get => _line;
         }
-        public class PlayerFactory : PlaceholderFactory<float, float, PlayerFacade>
+        public class PlayerFactory : PlaceholderFactory<Vector3, float, PlayerFacade>
         {
         }
-        public class BotFactory : PlaceholderFactory<float, float, PlayerFacade>
+        public class BotFactory : PlaceholderFactory<Vector3, float, PlayerFacade>
         {
         }
     }

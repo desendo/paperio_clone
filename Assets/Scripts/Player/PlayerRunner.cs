@@ -7,20 +7,19 @@ using System;
 
 namespace Game
 {
-    public class PlayerRunner :  ITickable,IInitializable
+    public class PlayerRunner :  ITickable
     {        
         
         PlayerLine line;
         PlayerRunnerView view;        
-        PlayerZone homeZone;        
-        PlayerZoneView ZoneView;        
+        PlayerZone zone;        
+        PlayerZoneView zoneView;        
         PlayerZoneService ZoneService;
         [Inject]
         PlayersRegistry playersRegistry;
 
 
         float squaredDeltaPos;
-        Vector3 oldPosition;
 
         bool wasOutsideHomeZone;
 
@@ -41,8 +40,8 @@ namespace Game
         {
             this.line = line;
             this.view = view;
-            this.homeZone = homeZone;
-            this.ZoneView = ZoneView;
+            this.zone = homeZone;
+            this.zoneView = ZoneView;
             this.ZoneService = ZoneService;
 
             Debug.Log("PlayerRunner constructor");
@@ -59,9 +58,10 @@ namespace Game
 
             var isOutsideHomeZone = IsOutsideHomeZome;
 
-            if (isOutsideHomeZone && !line.LineDrawEnabled)
-                line.CreateLine();
-
+            if (isOutsideHomeZone )
+            {
+               line.CreateLine();
+            }
             foreach (var item in playersRegistry.Zones)
             {
               //  Debug.Log(playersRegistry.Zones.Count);
@@ -91,52 +91,43 @@ namespace Game
             foreach (var zoneToCheck in playersRegistry.Zones)
             {
 
-                if (zoneToCheck.IsInZone(Position))
-                {
-
-                }
+           //     if (zoneToCheck.IsInZone(Position))
+         
             }
         }
 
         void HandleHomeZoneExit()
         {
-            
+            Debug.Log("HandleHomeZoneExit");
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
                 playerRunner = this,
                 isExiting = true,
-                zone = homeZone,
-                nearestBorderPointIndex = homeZone.GetNearestBorderPointTo(Position)
+                zone = zone,
+                nearestBorderPointIndex = zone.GetNearestBorderPointTo(Position)
             });
             
         }
 
         void HandleHomeZoneEnter()
         {
-
+            Debug.Log("HandleHomeZoneEnter");
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
                 playerRunner = this,
                 isExiting = false,
-                zone = homeZone,
-                nearestBorderPointIndex = homeZone.GetNearestBorderPointTo(Position)
+                zone = zone,
+                nearestBorderPointIndex = zone.GetNearestBorderPointTo(Position)
             });
 
-            ZoneView.UpdateMesh();
+            zoneView.UpdateMesh();
             line.ClearLine();
 
             //Debug.Log("площадб "+homeZone.Area());
         }
-        public void Initialize()
-        {
 
-            oldPosition =Vector3.zero;
-            
-            
-
-        }
         public Vector3 LookDir
         {
             get { return view.LookDir; }
@@ -150,7 +141,8 @@ namespace Game
         {
             get
             {
-                return !Helpers.CheckIfInPolygon(homeZone.BorderPointsList, Position);
+                
+                return !Helpers.CheckIfInPolygon(zone.BorderPointsList, Position);
             }
         }
         public Vector3 Position

@@ -6,16 +6,18 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-    public class ControlablePlayerSpawner 
+    public class BotSpawner
     {
-        readonly PlayerFacade.PlayerFactory _playerFactory;
+        readonly PlayerFacade.BotFactory _playerFactory;
 
-        public ControlablePlayerSpawner(PlayerFacade.PlayerFactory playerFactory) 
+        public BotSpawner(PlayerFacade.BotFactory playerFactory) 
         {
             _playerFactory = playerFactory;
         }
 
-        public void SpawnPlayer(Vector3 pos)
+
+
+        public void SpawnBot(Vector3 pos)
         {
             var player = _playerFactory.Create(pos, 0);
         }

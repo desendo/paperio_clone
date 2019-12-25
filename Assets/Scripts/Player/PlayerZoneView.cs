@@ -41,8 +41,7 @@ namespace Game
             _mesh.RecalculateBounds();
 
             _meshFilter.mesh = _mesh;
-
-            //_playerZone.DrawDebugBorder();
+            
 
         }
         
@@ -51,7 +50,7 @@ namespace Game
             PlayerZoneViewContainer = new GameObject("PlayerZoneViewContainer");
 
             PlayerZoneViewContainer.transform.parent = _playerFacade.transform;
-            PlayerZoneViewContainer.transform.localPosition = new Vector3(0, 0, _settings.height);
+            PlayerZoneViewContainer.transform.position = new Vector3(0, 0, _settings.height);
             _meshRenderer = PlayerZoneViewContainer.AddComponent<MeshRenderer>();
             _meshFilter = PlayerZoneViewContainer.AddComponent<MeshFilter>();
             _meshRenderer.material = _settings.zoneMaterial;

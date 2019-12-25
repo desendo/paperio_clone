@@ -30,7 +30,6 @@ namespace Game
         LineRenderer lineRenderer;
         public PlayerLine(PlayerRunner playerRunner)
         {
-            Debug.Log("PlayerLine constructor");
 
             _playerRunner = playerRunner;
             
@@ -40,7 +39,6 @@ namespace Game
         {
             get => _lineDots;            
         }
-        public bool LineDrawEnabled { get; internal set; }
         
         void AddDot(Vector3 pos)
         {            
@@ -68,11 +66,12 @@ namespace Game
 
         public void Tick()
         {
-            if (LineDrawEnabled)
-                CreateLine();
-            lineRenderer.positionCount = LineDots.Count+1;
+           // if (LineDrawEnabled)
+             //   CreateLine();
+            //lineRenderer.positionCount = LineDots.Count+1;
+            lineRenderer.positionCount = LineDots.Count;
             lineRenderer.SetPositions(LineDots.ToArray());
-            lineRenderer.SetPosition(LineDots.Count,_playerRunner.Position);            
+           // lineRenderer.SetPosition(LineDots.Count,_playerRunner.Position);            
 
         }
 
