@@ -10,7 +10,6 @@ namespace Game
 
         public PlayersRegistry()
         {
-            Debug.Log("PlayersRegistry called");
 
         }
         public List<PlayerLine> Lines

@@ -9,6 +9,8 @@ namespace Game
     public class PlayerZoneView 
     {
         [Inject]
+        PlayerFacade _playerFacade;
+        [Inject]
         Settings _settings;        
         readonly PlayerZone _playerZone;       
 
@@ -48,7 +50,7 @@ namespace Game
         {
             PlayerZoneViewContainer = new GameObject("PlayerZoneViewContainer");
 
-            //PlayerZoneViewContainer.transform.parent = _playerFacade.transform;
+            PlayerZoneViewContainer.transform.parent = _playerFacade.transform;
             PlayerZoneViewContainer.transform.localPosition = new Vector3(0, 0, _settings.height);
             _meshRenderer = PlayerZoneViewContainer.AddComponent<MeshRenderer>();
             _meshFilter = PlayerZoneViewContainer.AddComponent<MeshFilter>();

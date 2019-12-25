@@ -8,9 +8,7 @@ using System;
 namespace Game
 {
     public class PlayerRunnerView : MonoBehaviour
-    {        
-
-
+    {    
         Rigidbody2D _rigidBody;        
         Renderer[] _renderers;
         Transform _transform;        
@@ -40,8 +38,7 @@ namespace Game
         {
             _transform = transform;
             _renderers = _transform.GetComponentsInChildren<Renderer>();
-            _rigidBody = GetComponent<Rigidbody2D>();          
-            
+            _rigidBody = GetComponent<Rigidbody2D>();
 
         }
         public Vector3 LookDir

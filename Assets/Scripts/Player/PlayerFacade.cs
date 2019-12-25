@@ -9,7 +9,7 @@ namespace Game
     public class PlayerFacade : MonoBehaviour, IPoolable<float, float, IMemoryPool>, IDisposable
     {
 
-        PlayerRunnerView _runner;
+        PlayerRunner _runner;
         PlayerZone _zone;        
         PlayerLine _line;
         PlayersRegistry _registry;
@@ -17,7 +17,7 @@ namespace Game
 
         [Inject]
         public void Construct(
-            PlayerRunnerView player,
+            PlayerRunner player,
             PlayersRegistry playersRegistry,
             PlayerLine line,
             PlayerZone zone)

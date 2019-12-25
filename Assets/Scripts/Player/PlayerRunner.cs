@@ -55,13 +55,12 @@ namespace Game
         }
         public void Tick()
         {
-            Debug.Log("player runner tick");
             CheckZonesCrossings();
 
             var isOutsideHomeZone = IsOutsideHomeZome;
 
             if (isOutsideHomeZone && !line.LineDrawEnabled)
-                line.DrawLine();
+                line.CreateLine();
 
             foreach (var item in playersRegistry.Zones)
             {

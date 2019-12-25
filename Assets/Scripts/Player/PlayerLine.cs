@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerLine :ITickable
+    public class PlayerLine :ITickable,IInitializable
     {
         [Inject]
         GameSettingsInstaller.DebugSettings _debug;
@@ -15,33 +15,44 @@ namespace Game
         Settings _settings;
         [Inject]
         LineCrossingController lineCrossingController;
-        [Inject]
-        public PlayerFacade PlayerFacade { get; }
 
-        readonly PlayerRunnerView _playerRunner;
+        [Inject]
+        public PlayerFacade playerFacade { get; set; }
+
         
-        private List<Vector2> _lineDots = new List<Vector2>() ;
+        readonly PlayerRunner _playerRunner;
+        
+        
+        private List<Vector3> _lineDots = new List<Vector3>() ;
         private float squaredDeltaPos;
         private Vector3 oldPosition;
+        GameObject lineRendererContainer;
+        LineRenderer lineRenderer;
+        public PlayerLine(PlayerRunner playerRunner)
+        {
+            Debug.Log("PlayerLine constructor");
 
-        public List<Vector2> LineDots
+            _playerRunner = playerRunner;
+            
+        }
+
+        public List<Vector3> LineDots
         {
             get => _lineDots;            
         }
         public bool LineDrawEnabled { get; internal set; }
         
         void AddDot(Vector3 pos)
-        {
-            
+        {            
             _lineDots.Add(pos);
-            lineCrossingController.DotAdded(this);                
+            lineCrossingController.DotAdded(this);
 
         }
         public void ClearLine()
         {
             _lineDots.Clear();
         }
-        public void DrawLine()
+        public void CreateLine()
         {
             Vector3 position = _playerRunner.Position ;
             
@@ -49,6 +60,7 @@ namespace Game
             if (squaredDeltaPos > _settings.squaredUnitsPerDotPerFrame)
             {
                 AddDot(position);
+                
                 squaredDeltaPos = 0;
             }
             oldPosition = position;
@@ -57,7 +69,23 @@ namespace Game
         public void Tick()
         {
             if (LineDrawEnabled)
-                DrawLine();
+                CreateLine();
+            lineRenderer.positionCount = LineDots.Count+1;
+            lineRenderer.SetPositions(LineDots.ToArray());
+            lineRenderer.SetPosition(LineDots.Count,_playerRunner.Position);            
+
+        }
+
+  
+
+        public void Initialize()
+        {
+            lineRendererContainer = new GameObject("lineRendererContainer");
+            lineRendererContainer.transform.parent = playerFacade.transform;
+            lineRenderer = lineRendererContainer.AddComponent<LineRenderer>();
+            lineRenderer.material = _settings.lineMaterial;
+            lineRenderer.startWidth = _settings.width;
+            lineRenderer.endWidth = _settings.width;
         }
 
         [System.Serializable]
@@ -65,6 +93,9 @@ namespace Game
         {
             public float squaredUnitsPerDotPerFrame;
             public float destroySpeed;
+
+            public Material lineMaterial;
+            public float width;
         }
     }
 }

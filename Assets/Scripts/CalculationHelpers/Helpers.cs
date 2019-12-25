@@ -34,7 +34,7 @@ namespace Game
             return overlaps;
         }
 
-        public static bool SegmentCrossesPolyline(Vector2 Point1, Vector2 Point2, List<Vector2> polyline)
+        public static bool SegmentCrossesPolyline(Vector2 Point1, Vector2 Point2, List<Vector3> polyline)
         {
             if (polyline == null || polyline.Count < 2) return false;
             else

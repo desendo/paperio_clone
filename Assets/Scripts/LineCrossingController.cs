@@ -32,12 +32,12 @@ namespace Game
 
         private static void HandleKill(PlayerLine lineKiller, PlayerLine killedLine)
         {
-            killedLine.PlayerFacade.Die();
+            killedLine.playerFacade.Die();
         }
 
         private static void HandleCutOff(PlayerLine otherLine)
         {
-            otherLine.PlayerFacade.CutOff();
+            otherLine.playerFacade.CutOff();
         }
     }
 }

@@ -33,5 +33,7 @@ MonoBehaviour:
   playerLineSettings:
     squaredUnitsPerDotPerFrame: 0.0015
     destroySpeed: 2
+    lineMaterial: {fileID: 2100000, guid: 6818599dfaf7444438e16170e09d053a, type: 2}
+    width: 0.5
   debug:
     debugMaterial: {fileID: 0}

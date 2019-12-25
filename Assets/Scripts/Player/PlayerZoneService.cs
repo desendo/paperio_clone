@@ -13,8 +13,6 @@ namespace Game
         [Inject]
         PlayerZone zone;
         [Inject]
-        PlayerRunnerView runner;
-        [Inject]
         PlayerLine line;
 
         public PlayerZoneService()
@@ -30,8 +28,14 @@ namespace Game
             AddToZone(line.LineDots);           
 
         }
-        private void AddToZone(List<Vector2> line)
+        private void AddToZone(List<Vector3> line3d)
         {
+            var line = new List<Vector2>();
+            foreach (var point in line3d)
+            {
+                line.Add(point);
+            }
+
             bool isBorderClockwise = Triangulator.Area(zone.BorderPointsList) < 0;
             bool isLineClockWise = Triangulator.Area(line) < 0;
 
