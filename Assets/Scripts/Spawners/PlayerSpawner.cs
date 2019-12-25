@@ -7,7 +7,9 @@ using Random = UnityEngine.Random;
 namespace Game
 {
     public class ControlablePlayerSpawner 
+
     {
+        
         readonly PlayerFacade.PlayerFactory _playerFactory;
 
         public ControlablePlayerSpawner(PlayerFacade.PlayerFactory playerFactory) 
@@ -17,7 +19,7 @@ namespace Game
 
         public void SpawnPlayer(Vector3 pos)
         {
-            var player = _playerFactory.Create(pos, 0);
+            var player = _playerFactory.Create(pos, Helpers.GetRandomColor());
         }
 
     }

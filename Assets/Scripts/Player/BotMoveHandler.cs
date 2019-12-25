@@ -13,12 +13,14 @@ namespace Game
         readonly PlayerRunner _player;
 
         private Vector2 currentRotatePoint;
+        private float angle;
+
         public BotMoveHandler(PlayerMoveHandler.Settings settings, PlayerRunner player)
         {
             _settings = settings;
             _player = player;
         }
-        float angle;
+        
         public void Tick()
         {
             HandleMovement();
@@ -39,13 +41,9 @@ namespace Game
                 //_inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
             }
         }
-        Transform cameraTransform;
         public void LateTick()
         {
-         //   if (cameraTransform == null)
-               // cameraTransform = Camera.main.transform;
-
-           // cameraTransform.position = new Vector3(_player.Position.x, _player.Position.y, Camera.main.transform.position.z);
+        
         }
 
         [Serializable]

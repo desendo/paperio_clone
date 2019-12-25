@@ -26,7 +26,16 @@ namespace Game
             return c;
   
         }
-
+        
+        public static Color GetRandomColor()
+        {            
+            UnityEngine.Random random = new UnityEngine.Random();
+            return new Color(
+            UnityEngine.Random.value,
+            UnityEngine.Random.value,
+            UnityEngine.Random.value);
+        }
+        
         public static bool CheckIfRectsOverlaps(Vector2 lowerLeft1, Vector2 upperRight1, Vector2 lowerLeft2, Vector2 upperRight2)
         {
             bool overlaps = false;
@@ -46,7 +55,6 @@ namespace Game
                 }
             }
             return false;
-
         }
 
         public static bool CheckIfTwoSegmentsIntersects(Vector2 line1Point1, Vector2 line1Point2, Vector2 line2Point1, Vector2 line2Point2)
@@ -78,9 +86,7 @@ namespace Game
 
                 return true;
 
-            }
-
-                
+            }                
         }
 
     }

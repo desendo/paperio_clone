@@ -6,16 +6,16 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerFacade : MonoBehaviour, IPoolable<Vector3, float, IMemoryPool>, IDisposable
+    public class PlayerFacade : MonoBehaviour, IPoolable<Vector3, Color, IMemoryPool>, IDisposable
     {
 
         PlayerRunner _runner;
         PlayerZone _zone;
         PlayerLine _line;
         PlayersRegistry _registry;
-
+        Color _color;
         IMemoryPool _pool;
-
+        string _name;
         [Inject]
         public void Construct(
             PlayerRunner player,
@@ -28,25 +28,40 @@ namespace Game
             _zone = zone;
             _line = line;
         }
-        public void OnSpawned(Vector3 position, float speed, IMemoryPool pool)
+        public void OnSpawned(Vector3 position, Color color, IMemoryPool pool)
         {
             _pool = pool;
+            _color = color;
             transform.position = position;
             _registry.AddPlayer(this);
+            _name = BotSpawner.GetRandomName();
+            gameObject.name = _name;
         }
-
+        public string Name
+        {
+            get=> _name;
+        }
         public void OnDespawned()
         {
             _registry.RemovePlayer(this);
-        }
 
+        }
+        public Color MainColor
+        {
+            get => _color;
+        }
         public void Dispose()
         {
 
         }
+        public float ZoneArea
+        {
+            get => _zone.Area();
+        }
         public void Die()
         {
             Debug.Log("Die");
+            
             _pool.Despawn(this);
         }
 
@@ -71,10 +86,10 @@ namespace Game
         {
             get => _line;
         }
-        public class PlayerFactory : PlaceholderFactory<Vector3, float, PlayerFacade>
+        public class PlayerFactory : PlaceholderFactory<Vector3, Color, PlayerFacade>
         {
         }
-        public class BotFactory : PlaceholderFactory<Vector3, float, PlayerFacade>
+        public class BotFactory : PlaceholderFactory<Vector3, Color, PlayerFacade>
         {
         }
     }

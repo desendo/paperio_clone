@@ -25,7 +25,6 @@ namespace Game
 
         internal void UpdateMesh()
         {
-
             int[] indices = Triangulator.Triangulate(_playerZone.BorderPointsList);
 
             Vector3[] vertices = new Vector3[_playerZone.BorderPointsList.Count];
@@ -39,22 +38,19 @@ namespace Game
             _mesh.triangles = indices;
             _mesh.RecalculateNormals();
             _mesh.RecalculateBounds();
-
-            _meshFilter.mesh = _mesh;
-            
+            _meshFilter.mesh = _mesh;           
 
         }
         
         public void Initialize()
         {
             PlayerZoneViewContainer = new GameObject("PlayerZoneViewContainer");
-
             PlayerZoneViewContainer.transform.parent = _playerFacade.transform;
             PlayerZoneViewContainer.transform.position = new Vector3(0, 0, _settings.height);
             _meshRenderer = PlayerZoneViewContainer.AddComponent<MeshRenderer>();
             _meshFilter = PlayerZoneViewContainer.AddComponent<MeshFilter>();
             _meshRenderer.material = _settings.zoneMaterial;
-
+            _meshRenderer.material.color = _playerFacade.MainColor;
         }
 
         [System.Serializable]

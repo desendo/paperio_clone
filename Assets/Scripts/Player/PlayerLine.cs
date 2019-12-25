@@ -18,21 +18,17 @@ namespace Game
 
         [Inject]
         public PlayerFacade playerFacade { get; set; }
-
         
-        readonly PlayerRunner _playerRunner;
-        
+        readonly PlayerRunner _playerRunner;        
         
         private List<Vector3> _lineDots = new List<Vector3>() ;
         private float squaredDeltaPos;
         private Vector3 oldPosition;
         GameObject lineRendererContainer;
         LineRenderer lineRenderer;
-        public PlayerLine(PlayerRunner playerRunner)
-        {
+        public PlayerLine(PlayerRunner playerRunner)        {
 
-            _playerRunner = playerRunner;
-            
+            _playerRunner = playerRunner;            
         }
 
         public List<Vector3> LineDots
@@ -44,7 +40,6 @@ namespace Game
         {            
             _lineDots.Add(pos);
             lineCrossingController.DotAdded(this);
-
         }
         public void ClearLine()
         {
@@ -57,32 +52,31 @@ namespace Game
             squaredDeltaPos += (position - oldPosition).sqrMagnitude * Time.deltaTime;
             if (squaredDeltaPos > _settings.squaredUnitsPerDotPerFrame)
             {
-                AddDot(position);
-                
+                AddDot(position);                
                 squaredDeltaPos = 0;
             }
             oldPosition = position;
         }
 
         public void Tick()
-        {
-           // if (LineDrawEnabled)
-             //   CreateLine();
-            //lineRenderer.positionCount = LineDots.Count+1;
+        { 
             lineRenderer.positionCount = LineDots.Count;
-            lineRenderer.SetPositions(LineDots.ToArray());
-           // lineRenderer.SetPosition(LineDots.Count,_playerRunner.Position);            
-
+            var lineDotsArray = LineDots.ToArray();
+            for (int i = 0; i < lineDotsArray.Length; i++)
+            {
+                lineDotsArray[i] += new Vector3(0, 0, _settings.height);
+            }
+            lineRenderer.SetPositions(lineDotsArray);
         }
-
-  
 
         public void Initialize()
         {
-            lineRendererContainer = new GameObject("lineRendererContainer");
+            lineRendererContainer = new GameObject("Line View Container");
             lineRendererContainer.transform.parent = playerFacade.transform;
             lineRenderer = lineRendererContainer.AddComponent<LineRenderer>();
             lineRenderer.material = _settings.lineMaterial;
+            
+            lineRenderer.material.color = playerFacade.MainColor; 
             lineRenderer.startWidth = _settings.width;
             lineRenderer.endWidth = _settings.width;
         }
@@ -95,6 +89,7 @@ namespace Game
 
             public Material lineMaterial;
             public float width;
+            public float height;
         }
     }
 }

@@ -11,8 +11,10 @@ namespace Game
     {    
         Rigidbody2D _rigidBody;        
         Renderer[] _renderers;
-        Transform _transform;        
+        Transform _transform;
 
+        [Inject]
+        PlayerFacade playerFacade;
         public void Tick()
         {
 

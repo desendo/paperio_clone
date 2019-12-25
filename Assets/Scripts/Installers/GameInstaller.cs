@@ -13,30 +13,24 @@ namespace Game
         {
             Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
 
-
-            Container.BindFactory<Vector3, float, PlayerFacade, PlayerFacade.PlayerFactory>()
-                .FromPoolableMemoryPool<Vector3, float, PlayerFacade, PlayerFacadePool>(poolBinder => poolBinder
+            Container.BindFactory<Vector3, Color, PlayerFacade, PlayerFacade.PlayerFactory>()
+                .FromPoolableMemoryPool<Vector3, Color, PlayerFacade, PlayerFacadePool>(poolBinder => poolBinder
                     .WithInitialSize(1)
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<PlayerInstaller>(_settings.playerPrefab)
                     .UnderTransformGroup("ControlablePlayers"));
-
             
-            Container.BindFactory<Vector3, float, PlayerFacade, PlayerFacade.BotFactory>()
-                .FromPoolableMemoryPool<Vector3, float, PlayerFacade, BotFacadePool>(poolBinder => poolBinder
+            Container.BindFactory<Vector3, Color, PlayerFacade, PlayerFacade.BotFactory>()
+                .FromPoolableMemoryPool<Vector3, Color, PlayerFacade, BotFacadePool>(poolBinder => poolBinder
                     .WithInitialSize(5)
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<BotInstaller>(_settings.playerPrefab)
-                    .UnderTransformGroup("Bots"));
-
-            
+                    .UnderTransformGroup("Bots"));            
 
             Container.BindInterfacesAndSelfTo<ControlablePlayerSpawner>().AsSingle();
-
             Container.BindInterfacesAndSelfTo<BotSpawner>().AsSingle();
             Container.Bind<LineCrossingController>().AsSingle();
-            Container.Bind<PlayersRegistry>().AsSingle();
-            
+            Container.Bind<PlayersRegistry>().AsSingle();            
 
         }
         [Serializable]
@@ -45,10 +39,10 @@ namespace Game
             public GameObject playerPrefab;
             public float worldRadius;
         }
-        class PlayerFacadePool : MonoPoolableMemoryPool<Vector3, float, IMemoryPool, PlayerFacade>
+        class PlayerFacadePool : MonoPoolableMemoryPool<Vector3, Color, IMemoryPool, PlayerFacade>
         {
         }
-        class BotFacadePool : MonoPoolableMemoryPool<Vector3, float, IMemoryPool, PlayerFacade>
+        class BotFacadePool : MonoPoolableMemoryPool<Vector3, Color, IMemoryPool, PlayerFacade>
         {
         }
     }
