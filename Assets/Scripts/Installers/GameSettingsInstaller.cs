@@ -10,7 +10,8 @@ namespace Game
     //[CreateAssetMenu(menuName = "PaperioClone/Game Settings")]
     public class GameSettingsInstaller : ScriptableObjectInstaller<GameSettingsInstaller>
     {
-        public PlayerMoveHandler.Settings playerSettings;
+        public PlayerMoveHandler.Settings playerMoveHandlerSettings;
+        public PlayerRunner.Settings playerRunnerSettins;
         public GameInstaller.Settings gameInstallerSettings;
         public PlayerZone.Settings playerZoneSettings;
         public PlayerZoneView.Settings playerZoneViewSettings;
@@ -20,7 +21,8 @@ namespace Game
 
         public override void InstallBindings()
         {
-            Container.BindInstance(playerSettings);
+            Container.BindInstance(playerMoveHandlerSettings);
+            Container.BindInstance(playerRunnerSettins);
             Container.BindInstance(gameInstallerSettings);
             Container.BindInstance(playerZoneSettings);
             Container.BindInstance(playerZoneViewSettings);

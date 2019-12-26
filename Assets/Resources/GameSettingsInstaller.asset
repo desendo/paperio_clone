@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5c4b51e72c408c4db2ac691ff2fc98c, type: 3}
   m_Name: GameSettingsInstaller
   m_EditorClassIdentifier: 
-  playerSettings:
+  playerMoveHandlerSettings:
     moveSpeed: 0.1
-    turnSpeed: 0.12
-    rotationEpslon: 1.22
-    swipeDeadZoneLenght: 0
+    turnSpeed: 0.28
+    rotationEpslon: 0.09
+    swipeDeadZoneLenght: 0.16
+  playerRunnerSettins:
+    unitPerPoint: 0.1
   gameInstallerSettings:
     playerPrefab: {fileID: 4977536168379241754, guid: 35cf2d71adc67ce4d96e17af0d16ec8e,
       type: 3}
@@ -31,7 +33,6 @@ MonoBehaviour:
     zoneMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
     height: -0.01
   playerLineSettings:
-    squaredUnitsPerDotPerFrame: 0.0005
     destroySpeed: 2
     lineMaterial: {fileID: 2100000, guid: 6818599dfaf7444438e16170e09d053a, type: 2}
     width: 0.5

@@ -22,13 +22,11 @@ namespace Game
         private readonly PlayerRunner _playerRunner;
         private readonly Rect lineRect;
         private readonly List<CrossingController.Crossing> crossings;
-
         private readonly List<Vector2> _lineDots;
-        private float squaredDeltaPos;
-        private Vector3 oldPosition;
+
+ 
         private GameObject lineRendererContainer;
         private LineRenderer lineRenderer;
-
         
         public PlayerLine(PlayerRunner playerRunner)
         {
@@ -83,10 +81,13 @@ namespace Game
         }
 
 
-        void AddDot(Vector3 pos)
-        {            
+        public void AddDot(Vector3 pos)
+        {
+
+           // Helpers.PlaceCube(pos, Color.red);
             _lineDots.Add(pos);
-            lineCrossingController.OnLinePointAdded(this);
+            if(_lineDots.Count>1)
+                lineCrossingController.OnLinePointAdded(this);
             if(_lineDots.Count==1)
                 lineRect.InitWithPosition(pos);
             else
@@ -98,25 +99,12 @@ namespace Game
             lineRect.Reset();
             crossings.Clear();
         }
-        void CreateLine()
-        {
-            Vector3 position = _playerRunner.Position ;
-            
-            squaredDeltaPos += (position - oldPosition).sqrMagnitude * Time.deltaTime;
-            if (squaredDeltaPos > _settings.squaredUnitsPerDotPerFrame)
-            {
-                AddDot(position);
 
-                squaredDeltaPos = 0;
-            }
-            oldPosition = position;
-        }
+
         public void Tick()
         {
             Debug.DrawLine(new Vector3(lineRect.left, lineRect.bottom), new Vector3(lineRect.right, lineRect.top),Color.red);
 
-            if(LineDrawEnabled)
-                CreateLine();
 
             lineRenderer.positionCount = LineDots.Count;
             Vector3[] lineDotsArray = new Vector3[LineDots.Count];
@@ -127,7 +115,7 @@ namespace Game
             lineRenderer.SetPositions(lineDotsArray);
         }
 
-        internal void AddCrossing(PlayerZone zone, int crossIndex, bool isEntry)
+        internal void AddCrossingWithZone(PlayerZone zone, int crossIndex, bool isEntry)
         {
             CrossingController.Crossing crossing = null;
             foreach (var item in crossings)
@@ -162,8 +150,7 @@ namespace Game
                 
             }
         }
-
-
+        
         public void Initialize()
         {
             lineRendererContainer = new GameObject("Line View Container");
@@ -179,7 +166,6 @@ namespace Game
         [System.Serializable]
         public class Settings
         {
-            public float squaredUnitsPerDotPerFrame;
             public float destroySpeed;
 
             public Material lineMaterial;

@@ -6,6 +6,13 @@ namespace Game
 {
     public static class Helpers 
     {
+        public static void PlaceCube(Vector3 pos, Color color  )
+        {
+            GameObject t = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            t.transform.position = pos;
+            t.transform.localScale *= 0.2f;
+            t.GetComponent<MeshRenderer>().material.color = color;
+        }
         public static bool CheckIfInPolygon(List<Vector2> polygon, Vector2 point)
         {
 

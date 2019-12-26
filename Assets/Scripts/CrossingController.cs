@@ -85,7 +85,7 @@ namespace Game
         }
         private void AddCrossing(PlayerLine line,PlayerZone zone, int crossIndex, bool isEntry)
         {
-            line.AddCrossing(zone, crossIndex, isEntry);
+            line.AddCrossingWithZone(zone, crossIndex, isEntry);
             
         }
 

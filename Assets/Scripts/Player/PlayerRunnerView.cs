@@ -15,26 +15,6 @@ namespace Game
 
         [Inject]
         PlayerFacade playerFacade;
-        public void Tick()
-        {
-
-            /*
-            if (isOutsideHomeZone)
-            {
-                foreach (var item in _renderers)
-                {
-                    item.material.color = Color.red;
-                }
-            }
-            else
-            {
-                foreach (var item in _renderers)
-                {
-                    item.material.color = Color.green;
-                }
-            }
-*/
-        }
 
         public void Awake()
         {
