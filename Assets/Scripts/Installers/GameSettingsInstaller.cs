@@ -14,22 +14,21 @@ namespace Game
         public PlayerRunner.Settings playerRunnerSettins;
         public GameInstaller.Settings gameInstallerSettings;
         public PlayerZone.Settings playerZoneSettings;
+        public PlayerZoneService.Settings playerZoneServiceSettings;
         public PlayerZoneView.Settings playerZoneViewSettings;
         public PlayerLine.Settings playerLineSettings;
         public DebugSettings debug;
-
 
         public override void InstallBindings()
         {
             Container.BindInstance(playerMoveHandlerSettings);
             Container.BindInstance(playerRunnerSettins);
             Container.BindInstance(gameInstallerSettings);
+            Container.BindInstance(playerZoneServiceSettings);
             Container.BindInstance(playerZoneSettings);
             Container.BindInstance(playerZoneViewSettings);
             Container.BindInstance(playerLineSettings);
-
             Container.BindInstance(debug);
-
         }
 
         [Serializable]

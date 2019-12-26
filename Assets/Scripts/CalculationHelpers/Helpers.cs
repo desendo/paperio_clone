@@ -103,6 +103,12 @@ namespace Game
         {
             return SegmentCrossesPolyline(segment[0], segment[1], polyline, ref crossing);
         }
+
+        public static void SimplifyPolyline(List<Vector2> borderPoints, float distanceSimplifiy)
+        {
+            //to do Алгоритм Рамера — Дугласа — Пекера
+        }
+
         public static bool CheckIfTwoSegmentsIntersects(Vector2 line1Point1, Vector2 line1Point2, Vector2 line2Point1, Vector2 line2Point2, ref Vector2 crossing)
         {
 

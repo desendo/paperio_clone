@@ -11,5 +11,9 @@ namespace Game
         public bool isExiting;
         public int nearestBorderPointIndex;
     }
+    public struct SignalDie
+    {
+
+    }
 
 }

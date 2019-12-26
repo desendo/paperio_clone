@@ -4,7 +4,9 @@ using UnityEngine;
 using TMPro;
 namespace Game
 {
-    public class GuiHandler : MonoBehaviour
+
+    //to do
+    public class GuiHandler : MonoBehaviour,IReceive<SignalZoneBorderPass>
     {
         [SerializeField] TMP_Text exit;
         [SerializeField] TMP_Text enter;
@@ -20,6 +22,9 @@ namespace Game
             SignalsController.Default.Remove(this);
         }
 
-
+        public void HandleSignal(SignalZoneBorderPass arg)
+        {
+           
+        }
     }
 }

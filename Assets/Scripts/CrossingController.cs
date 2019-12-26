@@ -17,6 +17,7 @@ namespace Game
             this.playersRegistry = playersRegistry;
         }
 
+
         public void OnLinePointAdded(PlayerLine line)
         {            
             HandleLineCrossings(line);            

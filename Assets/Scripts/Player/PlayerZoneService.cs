@@ -5,8 +5,6 @@ using UnityEngine;
 using Zenject;
 namespace Game
 {
-
-
     
     public class PlayerZoneService : IReceive<SignalZoneBorderPass>
     {
@@ -18,6 +16,16 @@ namespace Game
         PlayerLine line;
         [Inject]
         CrossingController crossingController;
+        [Inject]
+        Settings _settings;
+        int homeEntry;
+        int homeExit;
+        [SerializeField]
+        public class Settings
+        {
+            public float distanceSimplifiy;
+
+        }
         public PlayerZoneService()
         {
             SignalsController.Default.Add(this);
@@ -110,6 +118,8 @@ namespace Game
                 zone.SetBorder(zonePart2);
 
             Debug.Log("after "+Triangulator.Area(zone.BorderPoints));
+
+            Helpers.SimplifyPolyline(zone.BorderPoints, _settings.distanceSimplifiy);
             view.UpdateMesh();
 
             
@@ -174,9 +184,11 @@ namespace Game
                 zone.SetBorder(zonePart1);            
             else 
                 zone.SetBorder(zonePart2);
+
+            Helpers.SimplifyPolyline(zone.BorderPoints, _settings.distanceSimplifiy);
+
         }
-        int homeEntry;
-        int homeExit;
+
         public void HandleSignal(SignalZoneBorderPass arg)
         {
             if (arg.zone == zone)

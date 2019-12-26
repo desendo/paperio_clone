@@ -50,7 +50,6 @@ namespace Game
             this.zoneView = zoneView;
             this.ZoneService = zoneService;
 
-
         }
         public void Tick()
         {
@@ -70,8 +69,7 @@ namespace Game
                         HandleHomeZoneExit(pointPosition);
                     }
                     else
-                    {
-                        
+                    {                        
                         line.AddDot(pointPosition);                        
                         HandleHomeZoneEnter(pointPosition);
                     }
@@ -114,22 +112,13 @@ namespace Game
             zoneView.UpdateMesh();
             line.ClearLine();
             crossingController.PerformCuts(zone);
-            //Debug.Log("площадб "+homeZone.Area());
+            
         }
 
         public void Initialize()
         {
             oldPosition = Position;
 
-         //   this.ObserveEveryValueChanged(x => (x.Position - x.oldPosition).magnitude).
-          //      Where(delta => delta >= _settings.unitPerPoint).
-        //        Subscribe(x => Debug.Log(x));
-
-            //var clickStream = Observable.EveryUpdate().Where(_ => Position);
-
-            //clickStream.Buffer(clickStream.Throttle(TimeSpan.FromMilliseconds(250)))
-            //.Where(xs => xs.Count >= 2)
-            //.Subscribe(xs => Debug.Log("DoubleClick Detected! Count:" + xs.Count));
         }
 
         public Vector3 LookDir
