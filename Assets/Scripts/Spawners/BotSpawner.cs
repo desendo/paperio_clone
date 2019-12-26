@@ -42,7 +42,7 @@ namespace Game
 
         public void SpawnBot(Vector3 pos)
         {
-            var player = _playerFactory.Create(pos, Helpers.GetRandomColor());
+            var player = _playerFactory.Create(pos, Helpers.GetRandomColor(), GetRandomName());
         }
 
     }

@@ -6,16 +6,19 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerFacade : MonoBehaviour, IPoolable<Vector3, Color, IMemoryPool>, IDisposable
+    public class PlayerFacade : MonoBehaviour, IPoolable<Vector3, Color, string, IMemoryPool>, IDisposable
     {
 
         PlayerRunner _runner;
         PlayerZone _zone;
         PlayerLine _line;
         PlayersRegistry _registry;
+        
         Color _color;
         IMemoryPool _pool;
         string _name;
+        [Inject]
+        CrossingController crossingController;
         [Inject]
         public void Construct(
             PlayerRunner player,
@@ -28,13 +31,13 @@ namespace Game
             _zone = zone;
             _line = line;
         }
-        public void OnSpawned(Vector3 position, Color color, IMemoryPool pool)
+        public void OnSpawned(Vector3 position, Color color, string name, IMemoryPool pool)
         {
             _pool = pool;
             _color = color;
             transform.position = position;
             _registry.AddPlayer(this);
-            _name = BotSpawner.GetRandomName();
+            _name = name;
             gameObject.name = _name;
         }
         public string Name
@@ -43,7 +46,9 @@ namespace Game
         }
         public void OnDespawned()
         {
+            crossingController.RemoveCrossings(this);
             _registry.RemovePlayer(this);
+
 
         }
         public Color MainColor
@@ -86,10 +91,10 @@ namespace Game
         {
             get => _line;
         }
-        public class PlayerFactory : PlaceholderFactory<Vector3, Color, PlayerFacade>
+        public class PlayerFactory : PlaceholderFactory<Vector3, Color, string, PlayerFacade>
         {
         }
-        public class BotFactory : PlaceholderFactory<Vector3, Color, PlayerFacade>
+        public class BotFactory : PlaceholderFactory<Vector3, Color, string, PlayerFacade>
         {
         }
     }

@@ -17,7 +17,8 @@ namespace Game
         PlayerZoneService ZoneService;
         [Inject]
         PlayersRegistry playersRegistry;
-
+        [Inject]
+        CrossingController crossingController;
 
         float squaredDeltaPos;
 
@@ -34,17 +35,16 @@ namespace Game
             PlayerLine line,
             PlayerRunnerView view,
             PlayerZone homeZone,
-            PlayerZoneView ZoneView,
-            PlayerZoneService ZoneService
+            PlayerZoneView zoneView,
+            PlayerZoneService zoneService
         )
         {
             this.line = line;
             this.view = view;
             this.zone = homeZone;
-            this.zoneView = ZoneView;
-            this.ZoneService = ZoneService;
+            this.zoneView = zoneView;
+            this.ZoneService = zoneService;
 
-            Debug.Log("PlayerRunner constructor");
             var clickStream = Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButtonDown(0));
 
@@ -54,18 +54,14 @@ namespace Game
         }
         public void Tick()
         {
-            CheckZonesCrossings();
 
             var isOutsideHomeZone = IsOutsideHomeZome;
 
             if (isOutsideHomeZone )
             {
-               line.CreateLine();
+               //line.CreateLine();
             }
-            foreach (var item in playersRegistry.Zones)
-            {
-              //  Debug.Log(playersRegistry.Zones.Count);
-            }
+
 
             if (isOutsideHomeZone && wasOutsideHomeZone != isOutsideHomeZone)
             {
@@ -74,31 +70,26 @@ namespace Game
             if (!isOutsideHomeZone && wasOutsideHomeZone != isOutsideHomeZone)
             {
                 HandleHomeZoneEnter();
+                
 
             }
             wasOutsideHomeZone = isOutsideHomeZone;
 
-
         }
         bool _cutoff;
-        internal void CutOff()
+        public void CutOff()
         {
             _cutoff = true;
         }
 
         private void CheckZonesCrossings()
         {
-            foreach (var zoneToCheck in playersRegistry.Zones)
-            {
 
-           //     if (zoneToCheck.IsInZone(Position))
-         
-            }
         }
 
         void HandleHomeZoneExit()
         {
-            Debug.Log("HandleHomeZoneExit");
+            line.LineDrawEnabled = true;
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
@@ -112,7 +103,9 @@ namespace Game
 
         void HandleHomeZoneEnter()
         {
-            Debug.Log("HandleHomeZoneEnter");
+            crossingController.PerformCuts(line);
+
+            line.LineDrawEnabled = false;
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
@@ -140,9 +133,8 @@ namespace Game
         public bool IsOutsideHomeZome
         {
             get
-            {
-                
-                return !Helpers.CheckIfInPolygon(zone.BorderPointsList, Position);
+            {                
+                return !Helpers.CheckIfInPolygon(zone.BorderPoints, Position);
             }
         }
         public Vector3 Position

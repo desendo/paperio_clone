@@ -7,42 +7,43 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerZone : IInitializable
+    public class PlayerZone : IInitializable,ITickable
     {
         [Inject]
         Settings settings;
         [Inject]
-        private PlayerFacade facade;
+        public PlayerFacade Facade { get; }
         private PlayerZoneView view;
         private PlayerZoneService service;        
         private List<Vector2> borderPoints;
-
+        Rect zoneRect;
         [Inject]
         public void Construct(PlayerZoneView view, PlayerZoneService service)
         {
             this.view = view;
             this.service = service;
             borderPoints = new List<Vector2>();
+            zoneRect = new Rect();
         }
-        
         public float Area()
         {
-            return Mathf.Abs(Triangulator.Area(BorderPointsList));
+            return Mathf.Abs(Triangulator.Area(BorderPoints));
         }
-        
-       // public bool IsInZone(Vector3 position)        
-       //     return Helpers.CheckIfInPolygon(BorderPointsList, position);
-        
-        public List<Vector2> BorderPointsList
+        public Rect rect
+        {
+            get => zoneRect;
+        }
+        public List<Vector2> BorderPoints
         {
             get => borderPoints;            
-            set => borderPoints = value;            
+            
         }
+        
+        public PlayerZoneService Service { get => service; }
 
         [System.Serializable]
         public class Settings
-        {
-         
+        {         
             public float initialRadius;
             public int initialDotsCount;
             public Material debugFirstPoint;
@@ -50,83 +51,51 @@ namespace Game
             public Material debugOtherPoints;
             
         }
-        public int[] GetNearestBorderEdgeTo(Vector3 position)
+        public int GetNearestBorderPointTo(Vector2 position)
         {
-            int[] pair = new int[2];
 
-            float sqaredDist = float.PositiveInfinity;
-            for (int i = 0; i < borderPoints.Count; i++)
-            {
-                float x1 = borderPoints[i].x;
-                float y1 = borderPoints[i].y;
-
-                int next = i+1;
-                if (next >= borderPoints.Count)
-                    next = 0;
-
-                float x2 = borderPoints[next].x;
-                float y2 = borderPoints[next].y;
-
-                float x0 = position.x;
-                float y0 = position.y;
-                float sqaredDistMinPoint1 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
-                float sqaredDistMinPoint2 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
-                if (sqaredDistMinPoint2 + sqaredDistMinPoint1 < sqaredDist)
-                {
-                    pair[0] = i;
-                    pair[1] = next;
-
-                    sqaredDist = sqaredDistMinPoint2 + sqaredDistMinPoint1;
-                }
-
-            }
-
-            return pair;
+           return Helpers.GetNearestBorderPointTo(borderPoints, position);
         }
-        public int GetNearestBorderPointTo(Vector3 position)
+        public bool  WithinBorder(Vector2 pos)
         {
-            float sqaredDist = float.PositiveInfinity;
-            int indexOfNearest = -1;
-            for (int i = 0; i < borderPoints.Count; i++)
-            {
-                float x1 = borderPoints[i].x;
-                float y1 = borderPoints[i].y;
-
-                float x2 = position.x;
-                float y2 = position.y;
-                float sqaredDistMin = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-                if (sqaredDistMin < sqaredDist)
-                {
-                    indexOfNearest = i;
-                    sqaredDist = sqaredDistMin;
-                }
-
-            }
-            return indexOfNearest;
-
+            return Helpers.CheckIfInPolygon(borderPoints, pos);
         }
-        
         public void GenerateCirclePolygon()
         {
-            int vertsCount = settings.initialDotsCount;
-            float r = settings.initialRadius;
-            float step = 360f / vertsCount;
-            float phase = UnityEngine.Random.value * 360f * 3.1415f;
-            for (int i = 0; i < vertsCount; i++)
-            {
-                float rad = (i * step) / 180.0f * 3.1415f + phase;
-                float x = (r * Mathf.Cos(rad ) );
-                float y = (r * Mathf.Sin(rad));
-                borderPoints.Add(new Vector2(x, y) + facade.Position2D);
-            }            
+            SetBorder(
+                    Helpers.GenerateCirclePolygon
+                    (
+                        settings.initialRadius,
+                        settings.initialDotsCount,
+                        Facade.Position2D
+                     )
+                );
         }
 
         public void Initialize()
         {
-
             GenerateCirclePolygon();
             view.Initialize();
             view.UpdateMesh();
+        }
+
+        internal void SetBorder(List<Vector2> border)
+        {
+            borderPoints = border;
+            if (borderPoints.Count > 0)
+            {
+                zoneRect.InitWithPosition(border[0]);
+                foreach (var item in borderPoints)
+                {
+                    zoneRect.UpdateWithPosition(item);
+                }
+            }                    
+        }
+        public void Tick()
+        {
+            
+            Debug.DrawLine(new Vector3(zoneRect.left, zoneRect.bottom), new Vector3(zoneRect.right, zoneRect.top), Color.black);
+
         }
     }
 }

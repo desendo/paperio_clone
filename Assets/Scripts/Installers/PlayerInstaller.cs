@@ -10,9 +10,6 @@ namespace Game
 
         public override void InstallBindings()
         {
-
-            //Container.Bind<Player>().AsSingle().WithArguments(_settings.rb, _settings.MeshRenderer, _settings.transform);
-            //Container.BindInterfacesAndSelfTo<PlayerRunner>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerRunner>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<PlayerLine>().AsSingle();

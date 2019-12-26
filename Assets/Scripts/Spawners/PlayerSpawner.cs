@@ -19,7 +19,7 @@ namespace Game
 
         public void SpawnPlayer(Vector3 pos)
         {
-            var player = _playerFactory.Create(pos, Helpers.GetRandomColor());
+            var player = _playerFactory.Create(pos, Helpers.GetRandomColor(),"Player");
         }
 
     }
