@@ -18,7 +18,7 @@ MonoBehaviour:
     rotationEpslon: 0.09
     swipeDeadZoneLenght: 0.16
   playerRunnerSettins:
-    unitPerPoint: 0.1
+    unitPerPoint: 0.63
   gameInstallerSettings:
     playerPrefab: {fileID: 4977536168379241754, guid: 35cf2d71adc67ce4d96e17af0d16ec8e,
       type: 3}

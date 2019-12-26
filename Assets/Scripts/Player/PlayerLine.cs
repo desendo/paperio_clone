@@ -21,7 +21,6 @@ namespace Game
 
         private readonly PlayerRunner _playerRunner;
         private readonly Rect lineRect;
-        private readonly List<CrossingController.Crossing> crossings;
         private readonly List<Vector2> _lineDots;
 
  
@@ -33,13 +32,9 @@ namespace Game
 
             _playerRunner = playerRunner;
             lineRect = new Rect();
-            crossings = new List<CrossingController.Crossing>();
             _lineDots = new List<Vector2>();
         }
-        public List<CrossingController.Crossing> Crossings
-        {
-            get => crossings;
-        }
+
         public Rect rect
         {
             get => lineRect;
@@ -62,7 +57,6 @@ namespace Game
                     return Facade.Position;
             }
         }
-        public bool LineDrawEnabled { get; set; }
 
         public Vector2[] LastSegment
         {
@@ -97,7 +91,6 @@ namespace Game
         {
             _lineDots.Clear();
             lineRect.Reset();
-            crossings.Clear();
         }
 
 
@@ -115,41 +108,7 @@ namespace Game
             lineRenderer.SetPositions(lineDotsArray);
         }
 
-        internal void AddCrossingWithZone(PlayerZone zone, int crossIndex, bool isEntry)
-        {
-            CrossingController.Crossing crossing = null;
-            foreach (var item in crossings)
-            {
-                if (item.performed) continue;
-                if (item.zone == zone && !item.passed)
-                {
-                    crossing = item;
-                }
-            }
-            if (crossing != null)
-            {
-                if (isEntry && crossing.passed)
-                    crossings.Remove(crossing);
-                else
-                {
-                    crossing.exitIndex = crossIndex;
-                    crossing.passed = true;
-                }
-            }
-            else
-            {
-                if (isEntry)
-                {
-                    crossing = new CrossingController.Crossing();
-                    crossing.enterIndex = crossIndex;
-                    crossing.zone = zone;
-                    Crossings.Add(crossing);
-                }
-                else
-                    return;
-                
-            }
-        }
+
         
         public void Initialize()
         {

@@ -12,7 +12,7 @@ namespace Game
         Rigidbody2D _rigidBody;        
         Renderer[] _renderers;
         Transform _transform;
-
+        
         [Inject]
         PlayerFacade playerFacade;
 

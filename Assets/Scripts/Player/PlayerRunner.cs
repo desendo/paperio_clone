@@ -58,67 +58,62 @@ namespace Game
 
             if (deltaPosition > _settings.unitPerPoint)
             {
-                Vector2 crossing = oldPosition;
-                bool isCrossingHomeZone = Helpers.SegmentCrossesPolyline(oldPosition, Position, zone.BorderPoints, ref crossing);
+                Vector2 pointPosition = oldPosition;
+                bool isCrossingHomeZone = Helpers.SegmentCrossesPolyline(oldPosition, Position, zone.BorderPoints, ref pointPosition,false);
                 
                 if (isCrossingHomeZone)
                 {
-                    
-                    
-                    
+                    Helpers.InsertPointOnCrossing(zone.BorderPoints, pointPosition);
                     if (IsOutsideHomeZome)
-                    {
-                        Debug.Log("crossing home zone exit");
-                        line.AddDot(crossing);
-                        HandleHomeZoneExit();
+                    {                        
+                        line.AddDot(pointPosition);                        
+                        HandleHomeZoneExit(pointPosition);
                     }
                     else
                     {
-                        Debug.Log("crossing home zone enter");
-                        line.AddDot(crossing);
-                        HandleHomeZoneEnter();
+                        
+                        line.AddDot(pointPosition);                        
+                        HandleHomeZoneEnter(pointPosition);
                     }
                 }
-                else if(IsOutsideHomeZome)
+                else if (IsOutsideHomeZome)
+                {
                     line.AddDot(Position);
-
+                }
                 
                 oldPosition = Position;                    
             }
 
         }
 
-        void HandleHomeZoneExit()
+        void HandleHomeZoneExit(Vector2 crossingPosition)
         {
-            line.LineDrawEnabled = true;
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
                 playerRunner = this,
                 isExiting = true,
                 zone = zone,
-                nearestBorderPointIndex = zone.GetNearestBorderPointTo(Position)
+                nearestBorderPointIndex = zone.GetNearestBorderPointTo(crossingPosition)
             });
             
         }
 
-        void HandleHomeZoneEnter()
+        void HandleHomeZoneEnter(Vector2 crossingPosition)
         {
-            crossingController.PerformCuts(line);
-
-            line.LineDrawEnabled = false;
+            
             SignalsController.Default.Send(
             new SignalZoneBorderPass()
             {
                 playerRunner = this,
                 isExiting = false,
                 zone = zone,
-                nearestBorderPointIndex = zone.GetNearestBorderPointTo(Position)
+                nearestBorderPointIndex = zone.GetNearestBorderPointTo(crossingPosition)
             });
 
             zoneView.UpdateMesh();
             line.ClearLine();
-
+            crossingController.PerformCuts(zone);
             //Debug.Log("площадб "+homeZone.Area());
         }
 

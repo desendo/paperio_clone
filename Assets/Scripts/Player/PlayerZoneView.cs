@@ -22,14 +22,22 @@ namespace Game
         {
             _playerZone = playerZone;
         }
-
+        List<GameObject> cubes = new List<GameObject>(); 
         internal void UpdateMesh()
         {
+
+            for (int i = 0; i < cubes.Count; i++)
+            {
+                GameObject.Destroy(cubes[i]);
+            }
+            
             int[] indices = Triangulator.Triangulate(_playerZone.BorderPoints);
 
             Vector3[] vertices = new Vector3[_playerZone.BorderPoints.Count];
             for (int i = 0; i < vertices.Length; i++)
             {
+
+
                 vertices[i] = new Vector3(_playerZone.BorderPoints[i].x, _playerZone.BorderPoints[i].y, 0);
             }
             Mesh _mesh = new Mesh();

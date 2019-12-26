@@ -9,86 +9,101 @@ namespace Game
     public class CrossingController
     {
 
-        public class Crossing
-        {
-            public PlayerZone zone;
-            public int enterIndex;
-            public int exitIndex;
-            public bool passed;
-            public bool performed;
-        }
-
-        public List<Crossing> crossings; 
-
         [Inject]
         PlayersRegistry playersRegistry;
 
         public CrossingController(PlayersRegistry playersRegistry)
         {
             this.playersRegistry = playersRegistry;
-            crossings = new List<Crossing>();
         }
 
         public void OnLinePointAdded(PlayerLine line)
-        {
-            //Debug.Log("OnLinePointAdded " + line.Facade.name);
-            HandleLineCrossings(line);
-            HandleZoneCrossings(line);            
+        {            
+            HandleLineCrossings(line);            
         }
 
-        
-
-
-        private void HandleZoneCrossings(PlayerLine line)
+        public void PerformCuts( PlayerZone zone)
         {
-            int i = 0;
-            foreach (var zone in playersRegistry.Zones)
+            foreach (var zoneToCut in playersRegistry.Zones)
             {
-                
-                
-                if (line.Facade.Zone == zone) continue;
-                if (!zone.rect.Overlaps(line.rect, 0.5f)) continue;
+                if (zoneToCut == zone) continue; // свою зону не отрезаем
+                bool overlaps = zone.rect.Overlaps(zoneToCut.rect);
+                if(overlaps)
+                    ZoneCross(zone, zoneToCut);
+            } 
+        }
+        private void ZoneCross(PlayerZone cuttingZone, PlayerZone zoneToCut)
+        {
 
-                Vector2 crossing = Vector2.zero;
-                bool isCrossing = Helpers.SegmentCrossesPolyline(line.LastSegment, zone.BorderPoints, ref crossing);
-                if (isCrossing)
+            var cuttingLine = cuttingZone.BorderPoints.ToArray();
+            var lineToCut = zoneToCut.BorderPoints.ToArray();
+
+
+            List<int> crossingIndexes = new List<int>(); 
+            List<Vector2> crossingPoints = new List<Vector2>();
+
+            bool hasCross = false;
+
+            for (int i = 0; i < cuttingLine.Length; i++)
+            {
+                if (Helpers.CheckIfInPolygon(zoneToCut.BorderPoints, cuttingLine[i]))
                 {
-                    int crossIndex = line.InsertPointToLastSegment(crossing);
-
-                    bool isEntry = zone.WithinBorder(line.LastPoint);                    
-                    AddCrossing(line, zone, crossIndex, isEntry);
-                    
-                      var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                      go.transform.localScale *= 0.2f;
-                      go.transform.position = crossing;
-                    if(isEntry)
-                        go.GetComponent<MeshRenderer>().material.color = Color.red;
-                    else
-                        go.GetComponent<MeshRenderer>().material.color = Color.blue;
-                }               
+                    hasCross = true;
+                    break;
+                }
             }
-        }
-        public void PerformCuts( PlayerLine line)
-        {
-            
-            foreach (var item in line.Crossings)
+
+            if (!hasCross) return;
+
+            bool wasInside = false;
+            bool isInside = false;
+
+            List<Vector2> updatetCuttingLine = new List<Vector2>();
+            for (int i = 0; i < cuttingLine.Length; i++)
             {
-                if (item.performed) continue;
-                if (!item.passed) continue;
-                item.zone.Service.PerfomCut(line, item.enterIndex, item.exitIndex);
-                item.performed = true;
 
-
+                int next = i + 1;
+                if (i + 1 >= cuttingLine.Length)
+                    next = 0;
+                updatetCuttingLine.Add(cuttingLine[i]);
+                Vector2 crossing = Vector2.zero;
+                if (Helpers.SegmentCrossesPolyline(cuttingLine[i], cuttingLine[next], zoneToCut.BorderPoints, ref crossing))
+                {
+                    updatetCuttingLine.Add(crossing);
+                }
             }
-            
-            
-        }
-        private void AddCrossing(PlayerLine line,PlayerZone zone, int crossIndex, bool isEntry)
-        {
-            line.AddCrossingWithZone(zone, crossIndex, isEntry);
-            
-        }
 
+            int currentSegment = 0;
+            List<List<Vector2>> segments = new List<List<Vector2>>();
+
+            for (int i = 0; i < updatetCuttingLine.Count; i++)
+            {
+
+                if (Helpers.CheckIfInPolygon(zoneToCut.BorderPoints, updatetCuttingLine[i]))
+                {
+                    Debug.Log(currentSegment);
+                    if (segments.Count < currentSegment + 1)
+                    {
+
+                        segments.Add(new List<Vector2>());
+                    }
+                    isInside = true;
+                    segments[currentSegment].Add(updatetCuttingLine[i]);
+                }
+                else
+                {
+                    isInside = false;
+                    if (isInside != wasInside)
+                        currentSegment++;
+                }
+                wasInside = isInside;
+            }
+            for (int j = 0; j < segments.Count; j++)
+            {
+                zoneToCut.Service.PerfomCut(segments[j]);
+            }
+
+        }
         private void HandleLineCrossings(PlayerLine line)
         {
             int count = line.LineDots.Count;
@@ -104,13 +119,7 @@ namespace Game
                 {                    
                     HandleCutOff(otherLine);                    
                     HandleKill(line, otherLine);
-                    Debug.Log(crossing);
-                    var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    go.transform.localScale *= 0.3f;
-                    go.transform.position = crossing;
-                }
-
-                
+                }                
             }
         }
 

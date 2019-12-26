@@ -6,12 +6,14 @@ namespace Game
 {
     public static class Helpers 
     {
-        public static void PlaceCube(Vector3 pos, Color color  )
+        public static GameObject  PlaceCube(Vector3 pos, Color color  )
         {
             GameObject t = GameObject.CreatePrimitive(PrimitiveType.Cube);
             t.transform.position = pos;
-            t.transform.localScale *= 0.2f;
+            t.transform.localScale *= 0.3f;
             t.GetComponent<MeshRenderer>().material.color = color;
+
+            return t;
         }
         public static bool CheckIfInPolygon(List<Vector2> polygon, Vector2 point)
         {
@@ -51,6 +53,11 @@ namespace Game
             return overlaps;
         }
 
+        public static void InsertPointOnCrossing(List<Vector2> borderPoints, Vector2 pointPosition)
+        {
+            
+        }
+
         internal static int GetNearestBorderPointTo(List<Vector2> borderPoints, Vector3 position)
         {
             float sqaredDist = float.PositiveInfinity;
@@ -72,17 +79,19 @@ namespace Game
             return indexOfNearest;
         }
 
-        public static bool SegmentCrossesPolyline(Vector2 Point1, Vector2 Point2, List<Vector2> polyline, ref Vector2 crossing)
+        public static bool SegmentCrossesPolyline(Vector2 Point1, Vector2 Point2, List<Vector2> polyline, ref Vector2 crossing, bool split = false)
         {
             crossing = Vector2.zero;
             if (polyline == null || polyline.Count < 2) return false;
             else
             {
+
                 for (int i = 0; i < polyline.Count - 1; i++)
                 {
                     if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[i + 1], ref crossing))
                     {
-                        
+                        if (split)
+                            polyline.Insert(i, crossing);
                         return true;
                     }
                 }

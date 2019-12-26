@@ -32,15 +32,6 @@ namespace Game
             Container.Bind<CrossingController>().AsSingle();
             Container.Bind<PlayersRegistry>().AsSingle();
 
-            Rect rect1 = new Rect();
-            Rect rect2 = new Rect();
-            rect1.InitWithPosition(Vector2.zero);
-            rect1.UpdateWithPosition(Vector2.one);
-
-            rect2.InitWithPosition(Vector2.one*1.001f);
-            rect2.UpdateWithPosition(Vector2.one * 2f);
-
-            //Debug.Log("overlaps "+rect2.Overlaps(rect1));
 
         }
         [Serializable]

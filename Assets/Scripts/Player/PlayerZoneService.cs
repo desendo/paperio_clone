@@ -32,11 +32,13 @@ namespace Game
 
         }
         private void RemoveFromZone(List<Vector2> line)
-        { 
-            //очень странно но алгоритм совершенно такой же. наверное в математике есть какая нить теорема
-            //to do привести оба метода к общему знаменателю
+        {
+
+            Debug.Log("before " + Triangulator.Area(zone.BorderPoints));
+            line.Reverse();
+
             int lineCount = line.Count;
-            
+            if (lineCount < 2) return;
 
             Vector2 entryPos = line[0];
             Vector2 exitPos = line[lineCount-1];
@@ -44,6 +46,7 @@ namespace Game
             int entryIndex = Helpers.GetNearestBorderPointTo(zone.BorderPoints, entryPos);
             int exitIndex = Helpers.GetNearestBorderPointTo(zone.BorderPoints, exitPos);
 
+            
 
             bool isBorderClockwise = Triangulator.Area(zone.BorderPoints) < 0;
             bool isLineClockWise = Triangulator.Area(line) < 0;
@@ -101,11 +104,12 @@ namespace Game
             float z2 = Triangulator.Area(zonePart2);
 
 
-            if (Mathf.Abs(z1)> Mathf.Abs(z2))
+            if (Mathf.Abs(z1) > Mathf.Abs(z2))
                 zone.SetBorder(zonePart1);
             else
                 zone.SetBorder(zonePart2);
 
+            Debug.Log("after "+Triangulator.Area(zone.BorderPoints));
             view.UpdateMesh();
 
             
@@ -189,12 +193,9 @@ namespace Game
             }
         }
 
-        public void PerfomCut(PlayerLine line, int enterIndex, int exitIndex)
+        public void PerfomCut(List<Vector2> line)
         {
-            List<Vector2> cutLine = line.LineDots.GetRange(enterIndex, exitIndex-enterIndex-1);
-            Debug.Log("cutLine  "+cutLine.Count);
-
-            RemoveFromZone(cutLine);
+            RemoveFromZone(line);
         }
         
     }

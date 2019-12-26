@@ -22,7 +22,15 @@ namespace Game
                 return false;
             return true;
         }
-
+        public bool Overlaps(Vector2 point, float overlap = 0)
+        {
+            
+            if (left - overlap > point.x+ overlap || point.x - overlap > right + overlap)
+                return false;
+            if (top + overlap < point.y - overlap || point.y + overlap < bottom - overlap)
+                return false;
+            return true;
+        }
         internal void InitWithPosition(Vector2 pos)
         {
             left = pos.x;
