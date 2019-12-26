@@ -6,8 +6,10 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-    public class ControlablePlayerSpawner :  ITickable, IInitializable
+    public class ControlablePlayerSpawner 
+
     {
+        
         readonly PlayerFacade.PlayerFactory _playerFactory;
 
         public ControlablePlayerSpawner(PlayerFacade.PlayerFactory playerFactory) 
@@ -15,13 +17,10 @@ namespace Game
             _playerFactory = playerFactory;
         }
 
-        public void Initialize()
+        public void SpawnPlayer(Vector3 pos)
         {
-            var player = _playerFactory.Create(0, 0);
+            var player = _playerFactory.Create(pos, Helpers.GetRandomColor(),"Player");
         }
 
-        public void Tick()
-        {
-        }
     }
 }

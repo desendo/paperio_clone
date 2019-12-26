@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -6,96 +7,96 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerZone 
+    public class PlayerZone : IInitializable,ITickable
     {
         [Inject]
-        Settings _settings;
-        readonly PlayerFacade _playerFacade;
-
-        private List<Vector2> _lineDots;
-        private Mesh mesh;
-        private MeshFilter filter;
-        private GameObject meshContainer;
-        private PolygonCollider2D collider2D;
-        public PlayerZone(PlayerFacade playerFacade)
+        Settings settings;
+        [Inject]
+        public PlayerFacade Facade { get; }
+        private PlayerZoneView view;
+        private PlayerZoneService service;        
+        private List<Vector2> borderPoints;
+        Rect zoneRect;
+        [Inject]
+        public void Construct(PlayerZoneView view, PlayerZoneService service)
         {
-            _playerFacade = playerFacade;
-            _lineDots = new List<Vector2>();
+            this.view = view;
+            this.service = service;
+            borderPoints = new List<Vector2>();
+            zoneRect = new Rect();
+        }
+        public float Area()
+        {
+            return Mathf.Abs(Triangulator.Area(BorderPoints));
+        }
+        public Rect rect
+        {
+            get => zoneRect;
+        }
+        public List<Vector2> BorderPoints
+        {
+            get => borderPoints;            
             
         }
-        public void Initialize()
-        {
-            InitComponents();
-        }
-        public IEnumerable<Vector2> LineDots
-        {
-            get => _lineDots;            
-        }
+        
+        public PlayerZoneService Service { get => service; }
 
         [System.Serializable]
         public class Settings
-        {
-            public float meshHeightOffset;
+        {         
             public float initialRadius;
             public int initialDotsCount;
-            public Material defaultMaterial;
+            public Material debugFirstPoint;
+            public Material debugSecondPoint;
+            public Material debugOtherPoints;
+            
         }
-        void InitComponents()
+        public int GetNearestBorderPointTo(Vector2 position)
         {
-            meshContainer = new GameObject("zone");
-            meshContainer.transform.parent = _playerFacade.transform;
-            
-            meshContainer.transform.localPosition =
-                new Vector3(0, 0, _settings.meshHeightOffset);
-            var renderer = meshContainer.AddComponent<MeshRenderer>();
-            collider2D = meshContainer.AddComponent<PolygonCollider2D>();
-            
-            renderer.material = _settings.defaultMaterial;
-            filter = meshContainer.AddComponent<MeshFilter>();
-            
+
+           return Helpers.GetNearestBorderPointTo(borderPoints, position);
+        }
+        public bool  WithinBorder(Vector2 pos)
+        {
+            return Helpers.CheckIfInPolygon(borderPoints, pos);
         }
         public void GenerateCirclePolygon()
         {
-            int vertsCount = _settings.initialDotsCount;
-            float r = _settings.initialRadius;
-            float step = 360f / vertsCount;
-            for (int i = 0; i < vertsCount; i++)
-            {
-                float rad = (i * step) / 180.0f * 3.14f;
-                float x = (r * Mathf.Cos(rad ) );
-                float y = (r * Mathf.Sin(rad));
-                _lineDots.Add(new Vector2(x, y));
-            }            
+            SetBorder(
+                    Helpers.GenerateCirclePolygon
+                    (
+                        settings.initialRadius,
+                        settings.initialDotsCount,
+                        Facade.Position2D
+                     )
+                );
         }
 
-        void UpdateCollider()
+        public void Initialize()
         {
-            collider2D.points = _lineDots.ToArray();
+            GenerateCirclePolygon();
+            view.Initialize();
+            view.UpdateMesh();
         }
-        public void UpdateMesh()
-        {
-            
-            Vector2[] vertices2D = _lineDots.ToArray();
-            Triangulator tr = new Triangulator(vertices2D);
-            int[] indices = tr.Triangulate();
 
-            Vector3[] vertices = new Vector3[vertices2D.Length];
-            for (int i = 0; i < vertices.Length; i++)
+        internal void SetBorder(List<Vector2> border)
+        {
+            borderPoints = border;
+            if (borderPoints.Count > 0)
             {
-                vertices[i] = new Vector3(vertices2D[i].x, vertices2D[i].y, 0);
+                zoneRect.InitWithPosition(border[0]);
+                foreach (var item in borderPoints)
+                {
+                    zoneRect.UpdateWithPosition(item);
+                }
             }
 
-            mesh = new Mesh();
-            mesh.vertices = vertices;
-            mesh.triangles = indices;
-            mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
-            filter.mesh = mesh;
-
-            UpdateCollider();
+        }
+        public void Tick()
+        {
+            
+            Debug.DrawLine(new Vector3(zoneRect.left, zoneRect.bottom), new Vector3(zoneRect.right, zoneRect.top), Color.black);
 
         }
-
-
     }
 }

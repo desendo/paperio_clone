@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4130385626948609140}
-  - component: {fileID: 5094805721847364403}
   - component: {fileID: 3113100538201010276}
   - component: {fileID: 4859490433190295973}
+  - component: {fileID: 6568810225605602191}
   m_Layer: 0
   m_Name: runner
   m_TagString: Untagged
@@ -34,18 +34,6 @@ Transform:
   m_Father: {fileID: 4977536168379241732}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5094805721847364403
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2413090280008474525}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b381cea6a566bb43812a491fef67e6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!58 &3113100538201010276
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -83,6 +71,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6568810225605602191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2413090280008474525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b381cea6a566bb43812a491fef67e6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4977536166777584748
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,7 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _components:
   - {fileID: 4741950132341513664}
-  - {fileID: 5094805721847364403}
+  - {fileID: 6568810225605602191}
   _identifier: 
   _useSceneContext: 0
   _context: {fileID: 0}

@@ -7,98 +7,157 @@ using System;
 
 namespace Game
 {
-    public class PlayerRunner : MonoBehaviour, ITickable,IInitializable
-    {
+    public class PlayerRunner :  ITickable, IInitializable
+    {        
+        
+        PlayerLine line;
+        PlayerRunnerView view;        
+        PlayerZone zone;        
+        PlayerZoneView zoneView;        
+        PlayerZoneService ZoneService;
+        [Inject]
+        PlayersRegistry playersRegistry;
+        [Inject]
+        CrossingController crossingController;
+
         [Inject]
         Settings _settings;
-        Rigidbody2D _rigidBody;        
-        Renderer[] _renderers;
-        Transform _transform;
-
-
         float squaredDeltaPos;
+
+        bool wasOutsideHomeZone;
+
+        Vector3 exitPoint;
+        int exitPointIndex;
+        Vector3 entryPoint;
+        int enterPointIndex;
+
+
         Vector3 oldPosition;
+        [Inject]
+        public void Construct
+        (
+            PlayerLine line,
+            PlayerRunnerView view,
+            PlayerZone homeZone,
+            PlayerZoneView zoneView,
+            PlayerZoneService zoneService            
+
+        )
+        {
+            this.line = line;
+            this.view = view;
+            this.zone = homeZone;
+            this.zoneView = zoneView;
+            this.ZoneService = zoneService;
+
+
+        }
         public void Tick()
         {
+            float deltaPosition = (Position - oldPosition).magnitude;
 
-            squaredDeltaPos += (_transform.position - oldPosition).sqrMagnitude * Time.deltaTime * Time.deltaTime * 3600f;
-            if (squaredDeltaPos > _settings.squaredDeltaPositionPerDot)
+            if (deltaPosition > _settings.unitPerPoint)
             {
-                PlaceDot(_transform.position);
-                squaredDeltaPos = 0;
+                Vector2 pointPosition = oldPosition;
+                bool isCrossingHomeZone = Helpers.SegmentCrossesPolyline(oldPosition, Position, zone.BorderPoints, ref pointPosition,false);
                 
+                if (isCrossingHomeZone)
+                {
+                    Helpers.InsertPointOnCrossing(zone.BorderPoints, pointPosition);
+                    if (IsOutsideHomeZome)
+                    {                        
+                        line.AddDot(pointPosition);                        
+                        HandleHomeZoneExit(pointPosition);
+                    }
+                    else
+                    {
+                        
+                        line.AddDot(pointPosition);                        
+                        HandleHomeZoneEnter(pointPosition);
+                    }
+                }
+                else if (IsOutsideHomeZome)
+                {
+                    line.AddDot(Position);
+                }
+                
+                oldPosition = Position;                    
             }
-            oldPosition = _transform.position;
+
         }
 
-        private void PlaceDot(Vector3 pos)
+        void HandleHomeZoneExit(Vector2 crossingPosition)
         {
-            Line.AddDot(pos);
+            SignalsController.Default.Send(
+            new SignalZoneBorderPass()
+            {
+                playerRunner = this,
+                isExiting = true,
+                zone = zone,
+                nearestBorderPointIndex = zone.GetNearestBorderPointTo(crossingPosition)
+            });
+            
+        }
+
+        void HandleHomeZoneEnter(Vector2 crossingPosition)
+        {
+            
+            SignalsController.Default.Send(
+            new SignalZoneBorderPass()
+            {
+                playerRunner = this,
+                isExiting = false,
+                zone = zone,
+                nearestBorderPointIndex = zone.GetNearestBorderPointTo(crossingPosition)
+            });
+
+            zoneView.UpdateMesh();
+            line.ClearLine();
+            crossingController.PerformCuts(zone);
+            //Debug.Log("площадб "+homeZone.Area());
         }
 
         public void Initialize()
         {
-            _transform = transform;
-            _renderers = _transform.GetComponentsInChildren<Renderer>();
-            _rigidBody = GetComponent<Rigidbody2D>();
-            oldPosition = _transform.position;
+            oldPosition = Position;
 
-            Debug.Log("runner Initialize");
-            Zone.Initialize();
-            Zone.GenerateCirclePolygon();
-            Zone.UpdateMesh();
-        }
+         //   this.ObserveEveryValueChanged(x => (x.Position - x.oldPosition).magnitude).
+          //      Where(delta => delta >= _settings.unitPerPoint).
+        //        Subscribe(x => Debug.Log(x));
 
-        [Inject]
-        public PlayerFacade Facade
-        {
-            get; set;
-        }
-        [Inject]
-        public PlayerLine Line
-        {
-            get; set;
-        }
-        [Inject]
-        public PlayerZone Zone
-        {
-            get; set;
-        }
-        public Renderer[] Renderers
-        {
-            get { return _renderers; }
-        }
-        public Vector2 LookDir
-        {
-            get { return _rigidBody.transform.right; }
+            //var clickStream = Observable.EveryUpdate().Where(_ => Position);
+
+            //clickStream.Buffer(clickStream.Throttle(TimeSpan.FromMilliseconds(250)))
+            //.Where(xs => xs.Count >= 2)
+            //.Subscribe(xs => Debug.Log("DoubleClick Detected! Count:" + xs.Count));
         }
 
+        public Vector3 LookDir
+        {
+            get { return view.LookDir; }
+        }
         public float Rotation
         {
-            get { return _transform.rotation.eulerAngles.z; }
-            set { _transform.eulerAngles = new Vector3(_transform.rotation.eulerAngles.x, _transform.rotation.eulerAngles.y,value); }
+            get { return view.Rotation; }
+            set { view.Rotation = value; }
         }
-        public bool IsOutside
+        public bool IsOutsideHomeZome
         {
-            get; set;
+            get
+            {                
+                return !Helpers.CheckIfInPolygon(zone.BorderPoints, Position);
+            }
         }
-        public bool IsCutOf
+        public Vector3 Position
         {
-            get; set;
+            get { return view.Position; }
+            set { view.Position = value; }
         }
-        public bool IsDead
-        {
-            get; set;
-        }
-        public Vector2 Position
-        {
-             get { return _transform.position; }
-             set { _transform.position = value; }
-        }
-        [Serializable]
+        [System.Serializable]
         public class Settings
         {
-            public float squaredDeltaPositionPerDot;
+            public float unitPerPoint;
         }
+
     }
 }

@@ -6,69 +6,95 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerFacade : MonoBehaviour, IPoolable<float, float, IMemoryPool>, IDisposable
+    public class PlayerFacade : MonoBehaviour, IPoolable<Vector3, Color, string, IMemoryPool>, IDisposable
     {
+
         PlayerRunner _runner;
         PlayerZone _zone;
         PlayerLine _line;
         PlayersRegistry _registry;
-
+        
+        Color _color;
+        IMemoryPool _pool;
+        string _name;
         [Inject]
-        public void Construct(PlayerRunner player, PlayersRegistry playersRegistry, PlayerLine line, PlayerZone zone)
+        CrossingController crossingController;
+        [Inject]
+        public void Construct(
+            PlayerRunner player,
+            PlayersRegistry playersRegistry,
+            PlayerLine line,
+            PlayerZone zone)
         {
-            _runner = player;            
+            _runner = player;
             _registry = playersRegistry;
             _zone = zone;
             _line = line;
         }
-
-        public bool IsDead
+        public void OnSpawned(Vector3 position, Color color, string name, IMemoryPool pool)
         {
-            get { return _runner.IsDead; }
-        }
-        public bool IsOutSide
-        {
-            get { return _runner.IsOutside; }
-        }
-        public bool IsCutOf
-        {
-            get { return _runner.IsCutOf; }
-        }
-        public Vector2 Position
-        {
-            get { return _runner.Position; }
-            set { _runner.Position = value; }
-        }
-        public float Rotation
-        {
-            get { return _runner.Rotation; }
-        }
-        public void OnSpawned(float accuracy, float speed, IMemoryPool pool)
-        {
-            Debug.Log("OnSpawned " + name);
-            //_pool = pool;
-            //_tunables.Accuracy = accuracy;
-            //_tunables.Speed = speed;
-
+            _pool = pool;
+            _color = color;
+            transform.position = position;
             _registry.AddPlayer(this);
+            _name = name;
+            gameObject.name = _name;
         }
-        public IEnumerable<Vector2> Line
+        public string Name
         {
-            get { return _line.LineDots; }
+            get=> _name;
         }
         public void OnDespawned()
         {
+            
             _registry.RemovePlayer(this);
-        }
 
+
+        }
+        public Color MainColor
+        {
+            get => _color;
+        }
         public void Dispose()
         {
+
+        }
+        public float ZoneArea
+        {
+            get => _zone.Area();
+        }
+        public void Die()
+        {
+            Debug.Log("Die");
+            
+            _pool.Despawn(this);
         }
 
-        public class PlayerFactory : PlaceholderFactory<float, float, PlayerFacade>
+        public PlayerZone Zone
+        {
+            get => _zone;
+        }
+        public Vector2 Position2D
+        {
+            get => transform.position;
+        }
+        public Vector3 Position
+        {
+            get => transform.position;
+        }
+        public void CutOff()
+        {
+           // _runner.CutOff();
+        }
+
+        public PlayerLine Line
+        {
+            get => _line;
+        }
+        public class PlayerFactory : PlaceholderFactory<Vector3, Color, string, PlayerFacade>
         {
         }
-        public class BotFactory : PlaceholderFactory<float, float, PlayerFacade>
+        public class BotFactory : PlaceholderFactory<Vector3, Color, string, PlayerFacade>
         {
         }
     }

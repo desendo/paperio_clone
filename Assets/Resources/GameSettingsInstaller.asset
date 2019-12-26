@@ -12,22 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5c4b51e72c408c4db2ac691ff2fc98c, type: 3}
   m_Name: GameSettingsInstaller
   m_EditorClassIdentifier: 
-  playerSettings:
-    moveSpeed: 0.41
-    turnSpeed: 0.06
-    rotationEpslon: 1.4
-    swipeDeadZoneLenght: 4.1
+  playerMoveHandlerSettings:
+    moveSpeed: 0.1
+    turnSpeed: 0.28
+    rotationEpslon: 0.09
+    swipeDeadZoneLenght: 0.16
+  playerRunnerSettins:
+    unitPerPoint: 0.63
   gameInstallerSettings:
     playerPrefab: {fileID: 4977536168379241754, guid: 35cf2d71adc67ce4d96e17af0d16ec8e,
       type: 3}
     worldRadius: 100
-  playerRunnerSettings:
-    squaredDeltaPositionPerDot: 1
   playerZoneSettings:
-    meshHeightOffset: -0.1
-    initialRadius: 7
-    initialDotsCount: 16
-    defaultMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
+    initialRadius: 4
+    initialDotsCount: 26
+    debugFirstPoint: {fileID: 2100000, guid: e475b5eab05d89040ac9618e72ffb150, type: 2}
+    debugSecondPoint: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}
+    debugOtherPoints: {fileID: 2100000, guid: fd8fac601ff7cfc48b4d4a7f9fad9a68, type: 2}
+  playerZoneViewSettings:
+    zoneMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
+    height: -0.01
   playerLineSettings:
-    discretizationFactor: 1
     destroySpeed: 2
+    lineMaterial: {fileID: 2100000, guid: 6818599dfaf7444438e16170e09d053a, type: 2}
+    width: 0.5
+    height: -0.02
+  debug:
+    debugMaterial: {fileID: 0}

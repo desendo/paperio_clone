@@ -20,14 +20,11 @@ namespace Game
             _player = player;
             _inputState = inputState;            
         }
-
         float angle;
         public void Tick()
         {
-            HandleMovement();           
-            
+            HandleMovement();
         }
-
         void HandleMovement()
         {
             float frameRateFactor = 60f * Time.deltaTime;
@@ -35,20 +32,22 @@ namespace Game
 
             if (_inputState.totalDelta.sqrMagnitude > _settings.swipeDeadZoneLenght * _settings.swipeDeadZoneLenght)
                 angle = Mathf.Atan2(_inputState.totalDelta.normalized.y, _inputState.totalDelta.normalized.x) * Mathf.Rad2Deg;
-            //Debug.Log(angle);
 
             if (Mathf.Abs(_player.Rotation - angle) > _settings.rotationEpslon)
             {
                 float lerpFactor = _settings.turnSpeed * frameRateFactor;
-
                 _player.Rotation = Mathf.LerpAngle(_player.Rotation, angle, lerpFactor);
-                _inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
+                
+                //_inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
             }
         }
-
+        Transform cameraTransform;
         public void LateTick()
         {
-            Camera.main.transform.position = new Vector3(_player.Position.x, _player.Position.y, Camera.main.transform.position.z);
+            if (cameraTransform == null)
+                cameraTransform = Camera.main.transform;
+
+            cameraTransform.position = new Vector3(_player.Position.x, _player.Position.y, Camera.main.transform.position.z);
         }
 
         [Serializable]
