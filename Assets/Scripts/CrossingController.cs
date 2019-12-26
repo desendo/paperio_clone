@@ -11,11 +11,11 @@ namespace Game
 
         public class Crossing
         {
-            public PlayerLine line;
             public PlayerZone zone;
-            public int crossIndex;
-            public bool isEntry;
-            public bool crossed;
+            public int enterIndex;
+            public int exitIndex;
+            public bool passed;
+            public bool performed;
         }
 
         public List<Crossing> crossings; 
@@ -36,30 +36,8 @@ namespace Game
             HandleZoneCrossings(line);            
         }
 
-        public void ClearNullCrossings()
-        {
-            var crossingsArray = crossings.ToArray();
-            for (int i = 0; i < crossingsArray.Length; i++)
-            {
-                if (crossingsArray[i].line == null||
-                    crossingsArray[i].zone == null)
-                {
-                    crossings.Remove(crossingsArray[i]);
-                }
-            }
-        }
-        public void RemoveCrossings(PlayerFacade facade)
-        {
-            var crossingsArray = crossings.ToArray();
-            for (int i = 0; i < crossingsArray.Length; i++)
-            {
-                if (crossingsArray[i].line == facade.Line ||
-                    crossingsArray[i].zone == facade.Zone)
-                {
-                    crossings.Remove(crossingsArray[i]);
-                }
-            }
-        }
+        
+
 
         private void HandleZoneCrossings(PlayerLine line)
         {
@@ -72,52 +50,43 @@ namespace Game
                 if (!zone.rect.Overlaps(line.rect, 0.5f)) continue;
 
                 Vector2 crossing = Vector2.zero;
-
-                if (Helpers.SegmentCrossesPolyline(
-                    line.LastSegment,
-                    zone.BorderPoints,
-                    ref crossing))
+                bool isCrossing = Helpers.SegmentCrossesPolyline(line.LastSegment, zone.BorderPoints, ref crossing);
+                if (isCrossing)
                 {
                     int crossIndex = line.InsertPointToLastSegment(crossing);
 
                     bool isEntry = zone.WithinBorder(line.LastPoint);                    
                     AddCrossing(line, zone, crossIndex, isEntry);
                     
-                      //var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                      //go.transform.localScale *= 0.5f;
-                      //go.transform.position = crossing;
+                      var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                      go.transform.localScale *= 0.2f;
+                      go.transform.position = crossing;
+                    if(isEntry)
+                        go.GetComponent<MeshRenderer>().material.color = Color.red;
+                    else
+                        go.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }               
             }
         }
         public void PerformCuts( PlayerLine line)
         {
             
-            foreach (var zone in playersRegistry.Zones)
+            foreach (var item in line.Crossings)
             {
-                List<Crossing> zoneCrossings = new List<Crossing>();
+                if (item.performed) continue;
+                if (!item.passed) continue;
+                item.zone.Service.PerfomCut(line, item.enterIndex, item.exitIndex);
+                item.performed = true;
 
 
-                foreach (var item in crossings)
-                {
-                    if (item.line == line && item.zone == zone)
-                    {
-                        zoneCrossings.Add(item);
-                    }
-                }
-                zone.Service.PerfomCuts(zoneCrossings);
             }
-
+            
             
         }
         private void AddCrossing(PlayerLine line,PlayerZone zone, int crossIndex, bool isEntry)
         {
-            crossings.Add(new Crossing()
-            {
-                crossIndex = crossIndex,
-                isEntry = isEntry,
-                line = line,
-                zone = zone
-            });
+            line.AddCrossing(zone, crossIndex, isEntry);
+            
         }
 
         private void HandleLineCrossings(PlayerLine line)

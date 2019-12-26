@@ -43,5 +43,14 @@ namespace Game
             else if (pos.y > top)
                 top = pos.y;
         }
+
+        internal void Reset()
+        {
+            bottom = 0;
+            top = 0;
+            left = 0;
+            right = 0;
+            
+        }
     }
 }

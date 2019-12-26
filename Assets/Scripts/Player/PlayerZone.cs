@@ -89,7 +89,8 @@ namespace Game
                 {
                     zoneRect.UpdateWithPosition(item);
                 }
-            }                    
+            }
+
         }
         public void Tick()
         {

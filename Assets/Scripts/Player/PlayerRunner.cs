@@ -54,14 +54,7 @@ namespace Game
         }
         public void Tick()
         {
-
             var isOutsideHomeZone = IsOutsideHomeZome;
-
-            if (isOutsideHomeZone )
-            {
-               //line.CreateLine();
-            }
-
 
             if (isOutsideHomeZone && wasOutsideHomeZone != isOutsideHomeZone)
             {
@@ -70,21 +63,8 @@ namespace Game
             if (!isOutsideHomeZone && wasOutsideHomeZone != isOutsideHomeZone)
             {
                 HandleHomeZoneEnter();
-                
-
             }
             wasOutsideHomeZone = isOutsideHomeZone;
-
-        }
-        bool _cutoff;
-        public void CutOff()
-        {
-            _cutoff = true;
-        }
-
-        private void CheckZonesCrossings()
-        {
-
         }
 
         void HandleHomeZoneExit()

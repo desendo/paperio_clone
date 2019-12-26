@@ -46,7 +46,7 @@ namespace Game
         }
         public void OnDespawned()
         {
-            crossingController.RemoveCrossings(this);
+            
             _registry.RemovePlayer(this);
 
 

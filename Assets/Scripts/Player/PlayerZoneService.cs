@@ -13,8 +13,11 @@ namespace Game
         [Inject]
         PlayerZone zone;
         [Inject]
+        PlayerZoneView view;
+        [Inject]
         PlayerLine line;
-
+        [Inject]
+        CrossingController crossingController;
         public PlayerZoneService()
         {
             SignalsController.Default.Add(this);
@@ -29,10 +32,11 @@ namespace Game
 
         }
         private void RemoveFromZone(List<Vector2> line)
-        {
-
+        { 
+            //очень странно но алгоритм совершенно такой же. наверное в математике есть какая нить теорема
+            //to do привести оба метода к общему знаменателю
             int lineCount = line.Count;
-            Debug.Log("remove from zone " + zone.Facade.name + line.Count);
+            
 
             Vector2 entryPos = line[0];
             Vector2 exitPos = line[lineCount-1];
@@ -54,17 +58,6 @@ namespace Game
                 copyLineNormal.Add(line[i]);
                 copyLineReversed.Add(line[i]);
             }
-
-            int k = 0;
-            foreach (var item in line)
-            {
-                if (k >= entryIndex || k <= exitIndex)
-                {
-                    var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    go.transform.localScale *= 0.5f;
-                    go.transform.position = item;
-                }
-            }
         
             copyLineReversed.Reverse();
 
@@ -73,6 +66,8 @@ namespace Game
 
             List<Vector2> zonePart2_1 = new List<Vector2>();
             List<Vector2> zonePart2_2 = new List<Vector2>();
+
+
             for (int i = 0; i < zone.BorderPoints.Count; i++)
             {
                 if (i >= i1 && i <= i2)
@@ -104,13 +99,16 @@ namespace Game
 
             float z1 = Triangulator.Area(zonePart1);
             float z2 = Triangulator.Area(zonePart2);
-            //здесь вычисляем по какой границе получится наибольший по площади полигон и применяем его
-            if (Mathf.Abs(z1) < Mathf.Abs(z2))
+
+
+            if (Mathf.Abs(z1)> Mathf.Abs(z2))
                 zone.SetBorder(zonePart1);
             else
                 zone.SetBorder(zonePart2);
 
+            view.UpdateMesh();
 
+            
         }
 
         private void AddToZone(List<Vector2> line)
@@ -191,40 +189,13 @@ namespace Game
             }
         }
 
-        public void PerfomCuts(List<CrossingController.Crossing> zoneCrossings)
+        public void PerfomCut(PlayerLine line, int enterIndex, int exitIndex)
         {
-            if (zoneCrossings.Count == 0) return;
+            List<Vector2> cutLine = line.LineDots.GetRange(enterIndex, exitIndex-enterIndex-1);
+            Debug.Log("cutLine  "+cutLine.Count);
 
-            Debug.Log("service perform cuts count "+zoneCrossings.Count);
-            int count = 0;
-            int entryIndex = -1;
-            int exitIndex = -1;
-            while (count < zoneCrossings.Count)
-            {
-                if (zoneCrossings[count].crossed) continue;
-
-                if (entryIndex == -1 && zoneCrossings[count].isEntry)
-                {
-                    entryIndex = zoneCrossings[count].crossIndex;
-                    zoneCrossings[count].crossed = true;
-                }
-                if (entryIndex != -1 && !zoneCrossings[count].isEntry && exitIndex == -1)
-                {
-                    exitIndex = zoneCrossings[count].crossIndex;
-                    zoneCrossings[count].crossed = true;
-                }
-                if (entryIndex != -1 && exitIndex != -1)
-                {
-                    
-                    RemoveFromZone(zoneCrossings[count].line.LineDots.GetRange(entryIndex, exitIndex));
-                    entryIndex = -1;
-                    exitIndex = -1;
-                    
-
-                }
-                count++;
-            }
-            
+            RemoveFromZone(cutLine);
         }
+        
     }
 }
