@@ -12,8 +12,9 @@ namespace Game
         PlayerFacade _playerFacade;
         [Inject]
         Settings _settings;        
-        readonly PlayerZone _playerZone;       
-
+        readonly PlayerZone _playerZone;
+        [Inject]
+        GameSettingsInstaller.DebugSettings debugSettings;
         MeshFilter _meshFilter;
         MeshRenderer _meshRenderer;
         GameObject PlayerZoneViewContainer;
@@ -31,15 +32,16 @@ namespace Game
                 GameObject.Destroy(cubes[i]);
             }
             
+
             int[] indices = Triangulator.Triangulate(_playerZone.BorderPoints);
 
             Vector3[] vertices = new Vector3[_playerZone.BorderPoints.Count];
             for (int i = 0; i < vertices.Length; i++)
             {
-
-
                 vertices[i] = new Vector3(_playerZone.BorderPoints[i].x, _playerZone.BorderPoints[i].y, 0);
-            }
+
+               // cubes.Add(Helpers.PlaceCube(_playerZone.BorderPoints[i], Color.red, debugSettings.digitCubePrefab, i.ToString()));
+                }
             Mesh _mesh = new Mesh();
 
             _mesh.vertices = vertices;

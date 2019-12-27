@@ -35,6 +35,7 @@ namespace Game
         public class DebugSettings
         {
             public Material debugMaterial;
+            public GameObject digitCubePrefab;
         }
     }
 }

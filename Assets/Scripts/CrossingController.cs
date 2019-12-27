@@ -68,7 +68,8 @@ namespace Game
                     next = 0;
                 updatetCuttingLine.Add(cuttingLine[i]);
                 Vector2 crossing = Vector2.zero;
-                if (Helpers.SegmentCrossesPolyline(cuttingLine[i], cuttingLine[next], zoneToCut.BorderPoints, ref crossing))
+                List<int> polylineIndex = new List<int>();
+                if (Helpers.SegmentCrossesPolyline(cuttingLine[i], cuttingLine[next], zoneToCut.BorderPoints, ref crossing, polylineIndex))
                 {
                     updatetCuttingLine.Add(crossing);
                 }

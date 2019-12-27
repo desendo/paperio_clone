@@ -25,10 +25,12 @@ MonoBehaviour:
     worldRadius: 100
   playerZoneSettings:
     initialRadius: 4
-    initialDotsCount: 26
+    initialDotsCount: 13
     debugFirstPoint: {fileID: 2100000, guid: e475b5eab05d89040ac9618e72ffb150, type: 2}
     debugSecondPoint: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}
     debugOtherPoints: {fileID: 2100000, guid: fd8fac601ff7cfc48b4d4a7f9fad9a68, type: 2}
+  playerZoneServiceSettings:
+    distanceSimplifiy: 0.06
   playerZoneViewSettings:
     zoneMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
     height: -0.01
@@ -39,3 +41,5 @@ MonoBehaviour:
     height: -0.02
   debug:
     debugMaterial: {fileID: 0}
+    digitCubePrefab: {fileID: 5405873812223872483, guid: 8f29c49045942af4baf4266812a705d2,
+      type: 3}

@@ -214,7 +214,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 108.9
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -844,6 +844,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exit: {fileID: 1889471283}
   enter: {fileID: 950202358}
+  kills: {fileID: 0}
+  area: {fileID: 0}
 --- !u!4 &1828825117
 Transform:
   m_ObjectHideFlags: 0

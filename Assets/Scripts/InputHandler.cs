@@ -17,10 +17,9 @@ namespace Game
         {
 #pragma warning disable CS0162 // Обнаружен недостижимый код
 
-            if (false)
+            if (true)
             {
                 if (Input.GetKey(KeyCode.A))
-
                     _inputState.totalDelta += Time.deltaTime * new Vector2(-1f, 0) *100f;
                 else if (Input.GetKey(KeyCode.D))
                     _inputState.totalDelta += Time.deltaTime * new Vector2(1f, 0) * 100f;

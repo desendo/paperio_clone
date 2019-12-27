@@ -19,7 +19,8 @@ namespace Game
         PlayersRegistry playersRegistry;
         [Inject]
         CrossingController crossingController;
-
+        [Inject]
+        GameSettingsInstaller.DebugSettings debugSettings;
         [Inject]
         Settings _settings;
         float squaredDeltaPos;
@@ -33,6 +34,7 @@ namespace Game
 
 
         Vector3 oldPosition;
+        bool oldInside;
         [Inject]
         public void Construct
         (
@@ -51,75 +53,72 @@ namespace Game
             this.ZoneService = zoneService;
 
         }
+
+
+        public void Initialize()
+        {
+            oldPosition = Position;
+            oldInside = true;
+
+        }
         public void Tick()
+        {
+            CheckHomeZoneCrossings();
+
+        }
+
+        private void CheckHomeZoneCrossings()
         {
             float deltaPosition = (Position - oldPosition).magnitude;
 
             if (deltaPosition > _settings.unitPerPoint)
             {
-                Vector2 pointPosition = oldPosition;
-                bool isCrossingHomeZone = Helpers.SegmentCrossesPolyline(oldPosition, Position, zone.BorderPoints, ref pointPosition,false);
+
+                Vector2 crossPoint = new Vector2();
+                List<int> p = new List<int>();
+
+                bool isCrossing = Helpers.SegmentCrossesPolyline(Position, oldPosition, zone.BorderPoints, ref crossPoint, p);
+
                 
-                if (isCrossingHomeZone)
+                if (oldInside != Inside && isCrossing)
                 {
-                    Helpers.InsertPointOnCrossing(zone.BorderPoints, pointPosition);
-                    if (IsOutsideHomeZome)
-                    {                        
-                        line.AddDot(pointPosition);                        
-                        HandleHomeZoneExit(pointPosition);
+
+                    List<Vector2> updatedborder = new List<Vector2>();
+                    oldInside = Inside;
+                    for (int i = 0; i < zone.BorderPoints.Count; i++)
+                    {
+                        updatedborder.Add(zone.BorderPoints[i]);
+                        if (i == p[0])
+                            updatedborder.Add(crossPoint);
                     }
-                    else
-                    {                        
-                        line.AddDot(pointPosition);                        
-                        HandleHomeZoneEnter(pointPosition);
-                    }
+                    zone.SetBorder( updatedborder);                   
+                   
+                    if (Inside)
+                    {
+                        HandleHomeZoneEnter();
+                    }                    
+                    line.AddDot(crossPoint);
                 }
-                else if (IsOutsideHomeZome)
+                else if (!Inside)
                 {
                     line.AddDot(Position);
+
                 }
-                
-                oldPosition = Position;                    
+                oldPosition = Position;
+
             }
-
         }
 
-        void HandleHomeZoneExit(Vector2 crossingPosition)
+        void HandleHomeZoneEnter()
         {
-            SignalsController.Default.Send(
-            new SignalZoneBorderPass()
-            {
-                playerRunner = this,
-                isExiting = true,
-                zone = zone,
-                nearestBorderPointIndex = zone.GetNearestBorderPointTo(crossingPosition)
-            });
-            
-        }
 
-        void HandleHomeZoneEnter(Vector2 crossingPosition)
-        {
-            
-            SignalsController.Default.Send(
-            new SignalZoneBorderPass()
-            {
-                playerRunner = this,
-                isExiting = false,
-                zone = zone,
-                nearestBorderPointIndex = zone.GetNearestBorderPointTo(crossingPosition)
-            });
-
+            ZoneService.HandleEnterHomeZone();
             zoneView.UpdateMesh();
             line.ClearLine();
-            crossingController.PerformCuts(zone);
+            //crossingController.PerformCuts(zone);
             
         }
 
-        public void Initialize()
-        {
-            oldPosition = Position;
-
-        }
 
         public Vector3 LookDir
         {
@@ -130,11 +129,11 @@ namespace Game
             get { return view.Rotation; }
             set { view.Rotation = value; }
         }
-        public bool IsOutsideHomeZome
+        public bool Inside
         {
             get
             {                
-                return !Helpers.CheckIfInPolygon(zone.BorderPoints, Position);
+                return Helpers.CheckIfInPolygon(zone.BorderPoints, Position);
             }
         }
         public Vector3 Position

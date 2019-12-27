@@ -6,7 +6,7 @@ using Zenject;
 namespace Game
 {
     
-    public class PlayerZoneService : IReceive<SignalZoneBorderPass>
+    public class PlayerZoneService 
     {
         [Inject]
         PlayerZone zone;
@@ -17,10 +17,12 @@ namespace Game
         [Inject]
         CrossingController crossingController;
         [Inject]
+        GameSettingsInstaller.DebugSettings debugSettings;
+        [Inject]
         Settings _settings;
         int homeEntry;
         int homeExit;
-        [SerializeField]
+        [Serializable]
         public class Settings
         {
             public float distanceSimplifiy;
@@ -34,7 +36,7 @@ namespace Game
         {
             SignalsController.Default.Remove(this);
         }
-        private void HandleEnterHomeZone()
+        public void HandleEnterHomeZone()
         {            
             AddToZone(line.LineDots);           
 
@@ -42,7 +44,6 @@ namespace Game
         private void RemoveFromZone(List<Vector2> line)
         {
 
-            Debug.Log("before " + Triangulator.Area(zone.BorderPoints));
             line.Reverse();
 
             int lineCount = line.Count;
@@ -119,14 +120,36 @@ namespace Game
 
             Debug.Log("after "+Triangulator.Area(zone.BorderPoints));
 
-            Helpers.SimplifyPolyline(zone.BorderPoints, _settings.distanceSimplifiy);
+            //Helpers.SimplifyPolyline(zone.BorderPoints, _settings.distanceSimplifiy);
             view.UpdateMesh();
 
             
         }
-
+        List<GameObject> border = new List<GameObject>();
         private void AddToZone(List<Vector2> line)
         {
+
+            for (int i = 0; i < border.Count; i++)
+            {
+                GameObject.Destroy(border[i]);
+            }
+
+            for (int i = 0; i < line.Count; i++)
+            {
+                var g = Helpers.PlaceCube(line[i], zone.Facade.MainColor, debugSettings.digitCubePrefab, i.ToString());
+                g.name = "line " + i;
+                border.Add(g);
+            }
+
+            for (int i = 0; i < zone.BorderPoints.Count; i++)
+            {
+                var g = Helpers.PlaceCube(zone.BorderPoints[i], Color.white, debugSettings.digitCubePrefab, i.ToString());
+                g.name = "border " + i;
+                border.Add(g);
+            }
+
+            Debug.Break();
+           // return;
             bool isBorderClockwise = Triangulator.Area(zone.BorderPoints) < 0;
             bool isLineClockWise = Triangulator.Area(line) < 0;
 
@@ -143,26 +166,16 @@ namespace Game
 
             copyLineReversed.Reverse();
 
+            homeExit = Helpers.GetNearestBorderPointTo(zone.BorderPoints,line[0]);
+            homeEntry = Helpers.GetNearestBorderPointTo(zone.BorderPoints, line[line.Count-1]);
+
+            Debug.Log("home entry " + homeEntry);
+            Debug.Log("home exit " + homeExit);
             int i1 = Mathf.Min( homeEntry, homeExit);
             int i2 = Mathf.Max(homeEntry, homeExit);
             
             List<Vector2> zonePart2_1 = new List<Vector2>();
             List<Vector2> zonePart2_2 = new List<Vector2>();
-            for (int i = 0; i < zone.BorderPoints.Count; i++)
-            {
-                if (i >= i1 && i <= i2)
-                {
-                    zonePart1.Add(zone.BorderPoints[i]);
-                }
-                if (i <= i1)
-                {
-                    zonePart2_1.Add(zone.BorderPoints[i]);
-                }
-                if (i >= i2)
-                {
-                    zonePart2_2.Add(zone.BorderPoints[i]);
-                }
-            }
 
             zonePart2_2.AddRange(zonePart2_1);
             zonePart2 = zonePart2_2;
@@ -172,38 +185,34 @@ namespace Game
             else
                 zonePart1.AddRange(copyLineNormal);
 
-            if (zonePart2[0] == zone.BorderPoints[homeExit])            
+            if (zonePart2[0] == zone.BorderPoints[homeExit])
                 zonePart2.AddRange(copyLineReversed);            
             else
                 zonePart2.AddRange(copyLineNormal);
 
             float z1 = Triangulator.Area(zonePart1);
             float z2 = Triangulator.Area(zonePart2);
-            //здесь вычисляем по какой границе получится наибольший по площади полигон и применяем его
-            if (Mathf.Abs(z1) > Mathf.Abs(z2)) 
-                zone.SetBorder(zonePart1);            
-            else 
+
+            Helpers.SimplifyPolyline(zonePart1, _settings.distanceSimplifiy);
+            Helpers.SimplifyPolyline(zonePart2, _settings.distanceSimplifiy);
+
+            if (Mathf.Abs(z1) > Mathf.Abs(z2))
+            {
+                zone.SetBorder(zonePart1);
+            }
+            else
+            {
                 zone.SetBorder(zonePart2);
 
+            }            
             Helpers.SimplifyPolyline(zone.BorderPoints, _settings.distanceSimplifiy);
 
+ 
+
+
+
         }
 
-        public void HandleSignal(SignalZoneBorderPass arg)
-        {
-            if (arg.zone == zone)
-            {
-                if (arg.isExiting)
-                {
-                    homeExit = arg.nearestBorderPointIndex;
-                }
-                else
-                {
-                    homeEntry = arg.nearestBorderPointIndex;
-                    HandleEnterHomeZone();
-                }
-            }
-        }
 
         public void PerfomCut(List<Vector2> line)
         {
