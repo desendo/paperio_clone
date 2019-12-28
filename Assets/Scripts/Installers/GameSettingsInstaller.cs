@@ -36,6 +36,7 @@ namespace Game
         {
             public Material debugMaterial;
             public GameObject digitCubePrefab;
+            public GameObject digitCylPb;
         }
     }
 }

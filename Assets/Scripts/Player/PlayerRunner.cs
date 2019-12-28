@@ -66,6 +66,7 @@ namespace Game
             CheckHomeZoneCrossings();
 
         }
+        List<GameObject> cubes = new List<GameObject>();
 
         private void CheckHomeZoneCrossings()
         {
@@ -74,36 +75,73 @@ namespace Game
             if (deltaPosition > _settings.unitPerPoint)
             {
 
+                for (int i = 0; i < cubes.Count; i++)
+                {
+                    GameObject.Destroy(cubes[i]);
+                }
+
+
                 Vector2 crossPoint = new Vector2();
                 List<int> p = new List<int>();
 
                 bool isCrossing = Helpers.SegmentCrossesPolyline(Position, oldPosition, zone.BorderPoints, ref crossPoint, p);
-
-                
-                if (oldInside != Inside && isCrossing)
+                if (isCrossing)
                 {
+                    string state = Inside ? "is inside" : "is outside";
+                    string wasState = oldInside ? "was inside" : "was outside";
+                   // Debug.Log("crossing happened. now " + state + " and " + wasState);
+                }
+                if (oldInside != Inside && !isCrossing)
+                {
+                    Debug.Log("переход без пересечения. ошибка меша");
+                    Debug.Break();
+                    
+                }
+
+                if (oldInside != Inside  && isCrossing)
+                {
+                    
 
                     List<Vector2> updatedborder = new List<Vector2>();
                     oldInside = Inside;
                     for (int i = 0; i < zone.BorderPoints.Count; i++)
                     {
                         updatedborder.Add(zone.BorderPoints[i]);
-                        if (i == p[0])
+                        if (p.Count > 1 && i == p[0])
+                        {
                             updatedborder.Add(crossPoint);
+                            //Helpers.PlaceCube(crossPoint, Color.black, debugSettings.digitCubePrefab, "B");
+                        }
                     }
-                    zone.SetBorder( updatedborder);                   
-                   
+                    zone.SetBorder( updatedborder);
+
+                    line.AddDot(crossPoint);
                     if (Inside)
                     {
                         HandleHomeZoneEnter();
-                    }                    
-                    line.AddDot(crossPoint);
+                    }
+                    else
+                    {
+                        HandleHomeZoneExit();
+                    }
+                    
                 }
                 else if (!Inside)
                 {
                     line.AddDot(Position);
 
                 }
+                /*
+                var c = Color.grey;
+                if (isCrossing)
+                    c = Color.red;
+                var g = Helpers.PlaceCube(oldPosition, c, debugSettings.digitCubePrefab, "0");
+                g.name = "old ";
+                cubes.Add(g);
+                var g1 = Helpers.PlaceCube(Position, c, debugSettings.digitCubePrefab, "1");
+                g1.name = "new ";
+                cubes.Add(g1);
+                */
                 oldPosition = Position;
 
             }
@@ -111,7 +149,6 @@ namespace Game
 
         void HandleHomeZoneEnter()
         {
-
             ZoneService.HandleEnterHomeZone();
             zoneView.UpdateMesh();
             line.ClearLine();
@@ -119,7 +156,11 @@ namespace Game
             
         }
 
+        void HandleHomeZoneExit()
+        {
 
+
+        }
         public Vector3 LookDir
         {
             get { return view.LookDir; }

@@ -17,19 +17,19 @@ namespace Game
         GameSettingsInstaller.DebugSettings debugSettings;
         MeshFilter _meshFilter;
         MeshRenderer _meshRenderer;
-        GameObject PlayerZoneViewContainer;
+        public GameObject PlayerZoneViewContainer { get; private set; }
 
         public PlayerZoneView(PlayerZone playerZone)
         {
             _playerZone = playerZone;
         }
-        List<GameObject> cubes = new List<GameObject>(); 
+        List<GameObject> cyl = new List<GameObject>(); 
         internal void UpdateMesh()
         {
 
-            for (int i = 0; i < cubes.Count; i++)
+            for (int i = 0; i < cyl.Count; i++)
             {
-                GameObject.Destroy(cubes[i]);
+                GameObject.Destroy(cyl[i]);
             }
             
 
@@ -40,7 +40,7 @@ namespace Game
             {
                 vertices[i] = new Vector3(_playerZone.BorderPoints[i].x, _playerZone.BorderPoints[i].y, 0);
 
-               // cubes.Add(Helpers.PlaceCube(_playerZone.BorderPoints[i], Color.red, debugSettings.digitCubePrefab, i.ToString()));
+               // cyl.Add(Helpers.PlaceCube(_playerZone.BorderPoints[i], Color.yellow, debugSettings.digitCylPb, i.ToString()));
                 }
             Mesh _mesh = new Mesh();
 

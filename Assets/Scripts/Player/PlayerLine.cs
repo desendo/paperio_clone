@@ -90,6 +90,7 @@ namespace Game
         public void ClearLine()
         {
             _lineDots.Clear();
+            lineRenderer.SetPositions(new Vector3[] { Vector3.negativeInfinity});
             lineRect.Reset();
         }
 
@@ -98,13 +99,14 @@ namespace Game
         {
             Debug.DrawLine(new Vector3(lineRect.left, lineRect.bottom), new Vector3(lineRect.right, lineRect.top),Color.red);
 
-
-            lineRenderer.positionCount = LineDots.Count;
-            Vector3[] lineDotsArray = new Vector3[LineDots.Count];
-            for (int i = 0; i < lineDotsArray.Length; i++)
+            
+            lineRenderer.positionCount = LineDots.Count+1;
+            Vector3[] lineDotsArray = new Vector3[LineDots.Count+1];
+            for (int i = 0; i < LineDots.Count; i++)
             {
                 lineDotsArray[i] = new Vector3(LineDots[i].x, LineDots[i].y, _settings.height);
             }
+            lineDotsArray[LineDots.Count] = new Vector3(_playerRunner.Position.x, _playerRunner.Position.y, _settings.height);
             lineRenderer.SetPositions(lineDotsArray);
         }
 

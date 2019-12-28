@@ -7,9 +7,33 @@ namespace Game
 {
     public static class Helpers 
     {
-        
-        
-        public static GameObject PlaceCube(Vector3 pos, Color color, GameObject prefab = null, string text= "")
+
+        public static void PlaceDebugLine(List<Vector2> line, Color color, GameObject prefab, string contextName, string prefix, float expanse)
+        {
+
+            Vector2 median = line[0];
+            for (int i = 1; i < line.Count; i++)
+            {
+                median += line[i];
+            }
+
+            var context = GameObject.Find(contextName);
+            if (context == null)
+                context = new GameObject(contextName);
+            foreach (Transform item in context.transform)
+            {
+                GameObject.Destroy(item.gameObject);
+            }
+            Transform par = context.transform;
+            for (int i = 0; i < line.Count; i++)
+            {
+                
+                Vector2 shift = (line[i] - median).normalized;
+                var go = PlaceDebugCube(line[i] + shift*expanse, color, prefab, prefix+" "+i.ToString());
+                go.transform.parent = par;
+            }
+        }
+        public static GameObject PlaceDebugCube(Vector3 pos, Color color, GameObject prefab = null, string text= "")
         {
             GameObject t;
             if (prefab == null)
@@ -18,7 +42,7 @@ namespace Game
                 t = GameObject.Instantiate(prefab);
             t.transform.position = pos;
             t.transform.localScale *= 0.3f;
-            t.GetComponent<MeshRenderer>().material.color = color;
+            t.transform.GetComponentInChildren<MeshRenderer>().material.color = color;
 
             if (!string.IsNullOrEmpty(text))
             {
@@ -94,9 +118,12 @@ namespace Game
             if (polyline == null || polyline.Count < 2) return false;
             else
             {
-                for (int i = 0; i < polyline.Count - 1; i++)
+                for (int i = 0; i < polyline.Count; i++)
                 {
-                    if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[i + 1], ref crossing))
+                    int second = i + 1;
+                    if (i + 1 == polyline.Count)
+                        second = 0;
+                    if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[second], ref crossing))
                     {
                         if (polylineIndexPair != null)
                         {
@@ -125,7 +152,6 @@ namespace Game
 
         public static void SimplifyPolyline(List<Vector2> borderPoints, float distanceSimplifiy)
         {
-            //to do Алгоритм Рамера — Дугласа — Пекера
 
             var borderArray = borderPoints.ToArray();
             List<Vector2> borderPointsUpdated= new List<Vector2>(); 
@@ -134,9 +160,11 @@ namespace Game
                 int i2 = i + 1;
                 if (i2 == borderArray.Length) i2 = 0;
                 var delta = (borderArray[i] - borderArray[i2]).sqrMagnitude;
-                if (delta < distanceSimplifiy)
-                    continue;
-                borderPointsUpdated.Add(borderArray[i]);
+                if (delta > distanceSimplifiy)
+                {
+
+                    borderPointsUpdated.Add(borderArray[i]);
+                }
             }
             borderPoints = borderPointsUpdated;
         }

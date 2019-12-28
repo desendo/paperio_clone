@@ -5,7 +5,7 @@ using TMPro;
 namespace Game
 {
 
-    //to do
+    //to do ALL GUI
     public class GuiHandler : MonoBehaviour,IReceive<SignalZoneBorderPass>
     {
         [SerializeField] TMP_Text exit;
