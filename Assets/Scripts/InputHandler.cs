@@ -8,16 +8,17 @@ namespace Game
     public class InputHandler : ITickable
     {
         readonly InputState _inputState;
-
+        [Inject]
+        GameSettingsInstaller.DebugSettings debugSettings;
         public InputHandler(InputState inputState)
         {
             _inputState = inputState;
         }
         public void Tick()
         {
-#pragma warning disable CS0162 // Обнаружен недостижимый код
 
-            if (true)
+
+            if (debugSettings.useWASD)
             {
                 if (Input.GetKey(KeyCode.A))
                     _inputState.totalDelta += Time.deltaTime * new Vector2(-1f, 0) *100f;
@@ -35,7 +36,6 @@ namespace Game
                 if (Input.touchCount > 0)
                     HandleTouches();
             }
-#pragma warning restore CS0162 // Обнаружен недостижимый код
 
         }
         void HandleTouches()

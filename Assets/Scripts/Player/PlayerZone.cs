@@ -13,7 +13,7 @@ namespace Game
         Settings settings;
         [Inject]
         public PlayerFacade Facade { get; }
-        private PlayerZoneView view;
+        public PlayerZoneView view { get; private set; }
         private PlayerZoneService service;        
         private List<Vector2> borderPoints;
         Rect zoneRect;

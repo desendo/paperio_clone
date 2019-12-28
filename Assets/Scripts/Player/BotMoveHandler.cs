@@ -13,7 +13,7 @@ namespace Game
         readonly PlayerRunner _player;
 
         private Vector2 currentRotatePoint;
-        private float angle;
+        private float angle = 0;
 
         public BotMoveHandler(PlayerMoveHandler.Settings settings, PlayerRunner player)
         {

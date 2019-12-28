@@ -45,11 +45,8 @@ namespace Game
             get=> _name;
         }
         public void OnDespawned()
-        {
-            
+        {            
             _registry.RemovePlayer(this);
-
-
         }
         public Color MainColor
         {
@@ -77,6 +74,14 @@ namespace Game
         public Vector2 Position2D
         {
             get => transform.position;
+        }
+        public Vector2 LastHomePosition
+        {
+            get => _runner.LastInsideHome;
+        }
+        public bool Inside
+        {
+            get => _runner.Inside;
         }
         public Vector3 Position
         {

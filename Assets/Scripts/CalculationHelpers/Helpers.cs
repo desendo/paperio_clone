@@ -5,6 +5,29 @@ using UnityEngine;
 using Zenject;
 namespace Game
 {
+
+    static class Extensions
+    {
+
+        public static T CircleNext<T>(this List<T> list, int index)
+        {            
+            if (index == list.Count - 1)
+                return list[0];
+            else 
+                return list[index + 1];
+        }
+
+        public static T CirclePrev<T>(this List<T> list, int index)
+        {
+            if (index == 0)
+                return list[list.Count - 1];
+            else
+                return list[index - 1];
+        }
+
+    }
+
+
     public static class Helpers 
     {
 
@@ -43,16 +66,17 @@ namespace Game
             t.transform.position = pos;
             t.transform.localScale *= 0.3f;
             t.transform.GetComponentInChildren<MeshRenderer>().material.color = color;
-
             if (!string.IsNullOrEmpty(text))
             {
                 var tmpro = t.transform.GetComponentInChildren<TMPro.TMP_Text>();
                 tmpro.text = text;
+                t.name = text;
+
             }
 
             return t;
         }
-        public static bool CheckIfInPolygon(List<Vector2> points, Vector2 point)
+        public static bool CheckIfInPolygon(List<Vector2> points, Vector2 point, bool includeBorders = false)
         {
 
             
@@ -61,10 +85,19 @@ namespace Game
 
             for (i = 0, j = nvert - 1; i < nvert; j = i++)
             {
-                if (((points[i].y >= point.y) != (points[j].y >= point.y)) &&
+                if (includeBorders)
+                {
+                    if (((points[i].y >= point.y) != (points[j].y >= point.y)) &&
                     (point.x <= (points[j].x - points[i].x) * (point.y - points[i].y) / (points[j].y - points[i].y) + points[i].x)
                   )
-                    c = !c;
+                        c = !c;
+                }
+                else
+                {
+                    if (((points[i].y > point.y) != (points[j].y > point.y)) &&
+                 (point.x < (points[j].x - points[i].x) * (point.y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
+                        c = !c;
+                }
             }
 
             return c;

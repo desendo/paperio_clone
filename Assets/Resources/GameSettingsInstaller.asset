@@ -30,7 +30,7 @@ MonoBehaviour:
     debugSecondPoint: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}
     debugOtherPoints: {fileID: 2100000, guid: fd8fac601ff7cfc48b4d4a7f9fad9a68, type: 2}
   playerZoneServiceSettings:
-    distanceSimplifiy: 0.01
+    distanceSimplifiy: 0.005
   playerZoneViewSettings:
     zoneMaterial: {fileID: 2100000, guid: aa93997beed7fea42aefdfe7ae1b6e04, type: 2}
     height: -0.01
@@ -45,3 +45,4 @@ MonoBehaviour:
       type: 3}
     digitCylPb: {fileID: 7060318477051273613, guid: 06120e1f4d6ecb3419ca651a65076b07,
       type: 3}
+    useWASD: 1

@@ -19,7 +19,7 @@ namespace Game
         public void Initialize()
         {
             _playerSpawner.SpawnPlayer( new Vector3(10,10,0));
-         //   _botSpawner.SpawnBot(new Vector3(20, 13, 0));
+            _botSpawner.SpawnBot(new Vector3(20, 13, 0));
         }
 
         public void Tick()

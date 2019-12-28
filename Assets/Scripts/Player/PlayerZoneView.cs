@@ -23,15 +23,8 @@ namespace Game
         {
             _playerZone = playerZone;
         }
-        List<GameObject> cyl = new List<GameObject>(); 
         internal void UpdateMesh()
-        {
-
-            for (int i = 0; i < cyl.Count; i++)
-            {
-                GameObject.Destroy(cyl[i]);
-            }
-            
+        {           
 
             int[] indices = Triangulator.Triangulate(_playerZone.BorderPoints);
 
@@ -40,8 +33,8 @@ namespace Game
             {
                 vertices[i] = new Vector3(_playerZone.BorderPoints[i].x, _playerZone.BorderPoints[i].y, 0);
 
-               // cyl.Add(Helpers.PlaceCube(_playerZone.BorderPoints[i], Color.yellow, debugSettings.digitCylPb, i.ToString()));
-                }
+               
+            }
             Mesh _mesh = new Mesh();
 
             _mesh.vertices = vertices;

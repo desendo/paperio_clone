@@ -27,26 +27,19 @@ namespace Game
             public float distanceSimplifiy;
 
         }
-        public PlayerZoneService()
-        {
-            SignalsController.Default.Add(this);
-        }
-        ~PlayerZoneService()
-        {
-            SignalsController.Default.Remove(this);
-        }
         public void HandleEnterHomeZone()
         {            
-            AddToZone(line.LineDots);           
+            AddLineToZone(line.Points);           
 
         }
-        private void RemoveFromZone(List<Vector2> line)
+
+        private void AddLineToZone(List<Vector2> line)
         {
 
-            
-        }
-        private void AddToZone(List<Vector2> line)
-        {
+            // в алгоритме специально оставлены избыточные листы для лучше читаемости и его переиспользования. 
+            // в продакшон версии от них можно избавится
+
+            //создаем два варианта линии
             List<Vector2> copyLineNormal = new List<Vector2>();
             List<Vector2> copyLineReversed = new List<Vector2>();
             for (int i = 0; i < line.Count; i++)
@@ -87,33 +80,32 @@ namespace Game
             zonePart1 = zonePart1_temp;
 
             //обрезаем кончики добавочной лении чтоб минимизировать шанс коллизий при построении меша. нужные вершины уже в линиях изначальной границы
-            copyLineReversed.RemoveAt(copyLineReversed.Count - 1);
-            copyLineReversed.RemoveAt(0);
-            copyLineNormal.RemoveAt(copyLineNormal.Count - 1);
-            copyLineNormal.RemoveAt(0);
-
-            Helpers.SimplifyPolyline(copyLineNormal, _settings.distanceSimplifiy);
+            if (line.Count > 2)
+            {
+                copyLineReversed.RemoveAt(copyLineReversed.Count - 1);
+                copyLineReversed.RemoveAt(0);
+                copyLineNormal.RemoveAt(copyLineNormal.Count - 1);
+                copyLineNormal.RemoveAt(0);
+            }
+            else
+                return;//если участок маленький для текущей частоты добавления точек, то мы его не учитываем
 
             //выбираем конец какой линии куда приставлять
             if (zonePart2[0] == zone.BorderPoints[exitIndex])
             {
-                Helpers.SimplifyPolyline(zonePart2, _settings.distanceSimplifiy);
                 zonePart2.AddRange(copyLineReversed);
             }
             else
             {
-                Helpers.SimplifyPolyline(zonePart2, _settings.distanceSimplifiy);
                 zonePart2.AddRange(copyLineNormal);
             }
 
             if (zonePart1[0] == zone.BorderPoints[exitIndex])
             {
-                Helpers.SimplifyPolyline(zonePart1, _settings.distanceSimplifiy);
                 zonePart1.AddRange(copyLineReversed);
             }
             else
             {
-                Helpers.SimplifyPolyline(zonePart1, _settings.distanceSimplifiy);
                 zonePart1.AddRange(copyLineNormal);
             }
          
@@ -128,14 +120,9 @@ namespace Game
             else
             {
                 zone.SetBorder(zonePart2);
-            } 
+            }
         }
-
-
-        public void PerfomCut(List<Vector2> line)
-        {
-            RemoveFromZone(line);
-        }
+ 
         
     }
 }

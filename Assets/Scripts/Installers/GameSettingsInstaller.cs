@@ -37,6 +37,8 @@ namespace Game
             public Material debugMaterial;
             public GameObject digitCubePrefab;
             public GameObject digitCylPb;
+
+            public bool useWASD = false;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Game
         {
             get => lineRect;
         }
-        public List<Vector2> LineDots
+        public List<Vector2> Points
         {
             get => _lineDots;            
         }
@@ -90,7 +90,7 @@ namespace Game
         public void ClearLine()
         {
             _lineDots.Clear();
-            lineRenderer.SetPositions(new Vector3[] { Vector3.negativeInfinity});
+            lineRenderer.positionCount = 0;
             lineRect.Reset();
         }
 
@@ -100,13 +100,13 @@ namespace Game
             Debug.DrawLine(new Vector3(lineRect.left, lineRect.bottom), new Vector3(lineRect.right, lineRect.top),Color.red);
 
             
-            lineRenderer.positionCount = LineDots.Count+1;
-            Vector3[] lineDotsArray = new Vector3[LineDots.Count+1];
-            for (int i = 0; i < LineDots.Count; i++)
+            lineRenderer.positionCount = Points.Count+1;
+            Vector3[] lineDotsArray = new Vector3[Points.Count+1];
+            for (int i = 0; i < Points.Count; i++)
             {
-                lineDotsArray[i] = new Vector3(LineDots[i].x, LineDots[i].y, _settings.height);
+                lineDotsArray[i] = new Vector3(Points[i].x, Points[i].y, _settings.height);
             }
-            lineDotsArray[LineDots.Count] = new Vector3(_playerRunner.Position.x, _playerRunner.Position.y, _settings.height);
+            lineDotsArray[Points.Count] = new Vector3(_playerRunner.Position.x, _playerRunner.Position.y, _settings.height);
             lineRenderer.SetPositions(lineDotsArray);
         }
 

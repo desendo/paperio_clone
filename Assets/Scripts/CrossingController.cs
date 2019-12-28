@@ -2,16 +2,19 @@
 using Zenject;
 using UnityEngine;
 using System;
+using ProceduralToolkit.ClipperLib;
+using ProceduralToolkit;
 
 namespace Game
 {
-    
+
     public class CrossingController
     {
 
         [Inject]
         PlayersRegistry playersRegistry;
-
+        [Inject]
+        GameSettingsInstaller.DebugSettings debugSettings;
         public CrossingController(PlayersRegistry playersRegistry)
         {
             this.playersRegistry = playersRegistry;
@@ -19,96 +22,58 @@ namespace Game
 
 
         public void OnLinePointAdded(PlayerLine line)
-        {            
-            HandleLineCrossings(line);            
+        {
+            HandleLineCrossings(line);
         }
 
-        public void PerformCuts( PlayerZone zone)
+        public void PerformCuts(PlayerZone zone)
         {
             foreach (var zoneToCut in playersRegistry.Zones)
             {
                 if (zoneToCut == zone) continue; // свою зону не отрезаем
                 bool overlaps = zone.rect.Overlaps(zoneToCut.rect);
-                if(overlaps)
+                if (overlaps)
+                {
                     ZoneCross(zone, zoneToCut);
-            } 
+                }
+            }
         }
         private void ZoneCross(PlayerZone cuttingZone, PlayerZone zoneToCut)
         {
+            var output = new List<List<Vector2>>();
 
-            var cuttingLine = cuttingZone.BorderPoints.ToArray();
-            var lineToCut = zoneToCut.BorderPoints.ToArray();
+            var clipper = new PathClipper();
+            clipper.AddPath(zoneToCut.BorderPoints, PolyType.ptSubject);
+            clipper.AddPath(cuttingZone.BorderPoints, PolyType.ptClip);
+            clipper.Clip(ClipType.ctDifference, ref output);
 
-
-            List<int> crossingIndexes = new List<int>(); 
-            List<Vector2> crossingPoints = new List<Vector2>();
-
-            bool hasCross = false;
-
-            for (int i = 0; i < cuttingLine.Length; i++)
+            for (int i = 0; i < output.Count; i++)
             {
-                if (Helpers.CheckIfInPolygon(zoneToCut.BorderPoints, cuttingLine[i]))
+                List<Vector2> border = output[i];
+
+                Vector2 playerRootPoint = zoneToCut.Facade.LastHomePosition;
+
+                if (zoneToCut.Facade.Inside)
                 {
-                    hasCross = true;
-                    break;
+                    playerRootPoint = zoneToCut.Facade.Position;
                 }
-            }
 
-            if (!hasCross) return;
-
-            bool wasInside = false;
-            bool isInside = false;
-
-            List<Vector2> updatetCuttingLine = new List<Vector2>();
-            for (int i = 0; i < cuttingLine.Length; i++)
-            {
-
-                int next = i + 1;
-                if (i + 1 >= cuttingLine.Length)
-                    next = 0;
-                updatetCuttingLine.Add(cuttingLine[i]);
-                Vector2 crossing = Vector2.zero;
-                List<int> polylineIndex = new List<int>();
-                if (Helpers.SegmentCrossesPolyline(cuttingLine[i], cuttingLine[next], zoneToCut.BorderPoints, ref crossing, polylineIndex))
+                if (Helpers.CheckIfInPolygon(border, playerRootPoint))
                 {
-                    updatetCuttingLine.Add(crossing);
-                }
-            }
-
-            int currentSegment = 0;
-            List<List<Vector2>> segments = new List<List<Vector2>>();
-
-            for (int i = 0; i < updatetCuttingLine.Count; i++)
-            {
-
-                if (Helpers.CheckIfInPolygon(zoneToCut.BorderPoints, updatetCuttingLine[i]))
-                {
-                    Debug.Log(currentSegment);
-                    if (segments.Count < currentSegment + 1)
-                    {
-
-                        segments.Add(new List<Vector2>());
-                    }
-                    isInside = true;
-                    segments[currentSegment].Add(updatetCuttingLine[i]);
+                    zoneToCut.SetBorder(border);
+                    zoneToCut.view.UpdateMesh();
                 }
                 else
                 {
-                    isInside = false;
-                    if (isInside != wasInside)
-                        currentSegment++;
+                    Debug.Log("not included");
                 }
-                wasInside = isInside;
-            }
-            for (int j = 0; j < segments.Count; j++)
-            {
-                zoneToCut.Service.PerfomCut(segments[j]);
+
             }
 
         }
         private void HandleLineCrossings(PlayerLine line)
         {
-            int count = line.LineDots.Count;
+            int count = line.Points.Count;
             if (count < 2) return;
             var linesArray = playersRegistry.Lines.ToArray();
             foreach (var otherLine in linesArray)
@@ -116,12 +81,12 @@ namespace Game
                 Vector2 crossing = Vector2.zero;
                 if (Helpers.SegmentCrossesPolyline(
                     line.LastSegment,
-                    otherLine.LineDots,
+                    otherLine.Points,
                     ref crossing))
-                {                    
-                    HandleCutOff(otherLine);                    
+                {
+                    HandleCutOff(otherLine);
                     HandleKill(line, otherLine);
-                }                
+                }
             }
         }
 
