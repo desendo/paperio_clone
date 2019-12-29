@@ -16,8 +16,6 @@ namespace Game
         }
         public void Tick()
         {
-
-
             if (debugSettings.useWASD)
             {
                 if (Input.GetKey(KeyCode.A))

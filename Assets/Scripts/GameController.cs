@@ -3,27 +3,75 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using UniRx;
 namespace Game
 {
-    public class GameController : IInitializable, ITickable, IDisposable
+    public class GameController : IInitializable
     {
         [Inject]
         ControlablePlayerSpawner _playerSpawner;
         [Inject]
         BotSpawner _botSpawner;
-        public void Dispose()
-        {
-
-        }
-
+        [Inject]
+        PlayersRegistry registry;
+        [Inject]
+        World world;
+        [Inject]
+        Settings settings;
         public void Initialize()
         {
-            _playerSpawner.SpawnPlayer( new Vector3(10,10,0));
-            _botSpawner.SpawnBot(new Vector3(20, 13, 0));
+            var bot_spawner = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(x => 
+            {
+                if (CurrentBotsCount < settings.maximumBots)
+                {
+                    var v = UnityEngine.Random.insideUnitCircle * world.Radius;
+                    _botSpawner.SpawnBot(v);
+
+                }
+            });
+
+            var player_spawner = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(x =>
+            {
+                if (CurrentPlayerCount < 1)
+                {
+                    var v = UnityEngine.Random.insideUnitCircle * world.Radius;
+                    _playerSpawner.SpawnPlayer(v);
+                }
+            });
+
+        }
+        public int CurrentBotsCount
+        {
+            get
+            {
+                int c = 0;
+                for (int i = 0; i < registry.PlayerFacades.Count; i++)
+                {
+                    if (registry.PlayerFacades[i].IsBot)
+                        c++;
+                }
+                return c;
+            }
+        }
+        public int CurrentPlayerCount
+        {
+            get
+            {
+                int c = 0;
+                for (int i = 0; i < registry.PlayerFacades.Count; i++)
+                {
+                    if (!registry.PlayerFacades[i].IsBot)
+                        c++;
+                }
+                return c;
+            }
         }
 
-        public void Tick()
+
+        [System.Serializable]
+        public class Settings
         {
+            public int maximumBots;
         }
     }
 }

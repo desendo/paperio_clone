@@ -6,7 +6,7 @@ namespace Game
 {
 
     //to do ALL GUI
-    public class GuiHandler : MonoBehaviour,IReceive<SignalZoneBorderPass>
+    public class GuiHandler : MonoBehaviour
     {
         [SerializeField] TMP_Text exit;
         [SerializeField] TMP_Text enter;
@@ -22,9 +22,6 @@ namespace Game
             SignalsController.Default.Remove(this);
         }
 
-        public void HandleSignal(SignalZoneBorderPass arg)
-        {
-           
-        }
+
     }
 }

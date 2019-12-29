@@ -12,15 +12,16 @@ namespace Game
         readonly Settings _settings;
         readonly PlayerRunner _player;
         readonly InputState _inputState;
-
+        private float angle;
         private Vector2 currentRotatePoint;
+        Transform cameraTransform; //todo камеру вытащить
         public PlayerMoveHandler(Settings settings, PlayerRunner player, InputState inputState)
         {
             _settings = settings;
             _player = player;
             _inputState = inputState;            
         }
-        float angle;
+        
         public void Tick()
         {
             HandleMovement();
@@ -31,17 +32,19 @@ namespace Game
             _player.Position += _player.LookDir * _settings.moveSpeed * frameRateFactor;
 
             if (_inputState.totalDelta.sqrMagnitude > _settings.swipeDeadZoneLenght * _settings.swipeDeadZoneLenght)
-                angle = Mathf.Atan2(_inputState.totalDelta.normalized.y, _inputState.totalDelta.normalized.x) * Mathf.Rad2Deg;
+            {
+               float  angle = Mathf.Atan2(_inputState.totalDelta.normalized.y, _inputState.totalDelta.normalized.x) * Mathf.Rad2Deg;
+                SetTargetAngle(angle);
+            }
 
             if (Mathf.Abs(_player.Rotation - angle) > _settings.rotationEpslon)
             {
                 float lerpFactor = _settings.turnSpeed * frameRateFactor;
-                _player.Rotation = Mathf.LerpAngle(_player.Rotation, angle, lerpFactor);
                 
-                //_inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
+                _player.Rotation = Mathf.LerpAngle(_player.Rotation, angle, lerpFactor);                
             }
         }
-        Transform cameraTransform;
+        
         public void LateTick()
         {
             if (cameraTransform == null)
@@ -49,7 +52,10 @@ namespace Game
 
             cameraTransform.position = new Vector3(_player.Position.x, _player.Position.y, Camera.main.transform.position.z);
         }
-
+        public void SetTargetAngle(float angle)
+        {
+            this.angle = angle;
+        }
         [Serializable]
         public class Settings
         {

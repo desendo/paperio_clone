@@ -11,22 +11,10 @@ namespace Game
         [Inject]
         PlayerZone zone;
         [Inject]
-        PlayerZoneView view;
-        [Inject]
         PlayerLine line;
         [Inject]
-        CrossingController crossingController;
-        [Inject]
         GameSettingsInstaller.DebugSettings debugSettings;
-        [Inject]
-        Settings _settings;
 
-        [Serializable]
-        public class Settings
-        {
-            public float distanceSimplifiy;
-
-        }
         public void HandleEnterHomeZone()
         {            
             AddLineToZone(line.Points);           
@@ -108,8 +96,8 @@ namespace Game
             {
                 zonePart1.AddRange(copyLineNormal);
             }
-         
-            // выбираем кусок который использовать.
+            
+            // выбираем кусок который использовать. однозначно это тот кусок который больше.
             float z1 = Triangulator.Area(zonePart1);
             float z2 = Triangulator.Area(zonePart2);
 

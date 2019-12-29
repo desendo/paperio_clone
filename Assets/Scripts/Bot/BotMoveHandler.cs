@@ -7,18 +7,19 @@ using Zenject;
 
 namespace Game
 {
-    public class BotMoveHandler : ITickable,ILateTickable
+    public class BotMoveHandler : ITickable
     {
         readonly PlayerMoveHandler.Settings _settings;
         readonly PlayerRunner _player;
+        readonly TargetAngleState _angle;
 
         private Vector2 currentRotatePoint;
-        private float angle = 0;
 
-        public BotMoveHandler(PlayerMoveHandler.Settings settings, PlayerRunner player)
+        public BotMoveHandler(PlayerMoveHandler.Settings settings, PlayerRunner player, TargetAngleState angle)
         {
             _settings = settings;
             _player = player;
+            _angle = angle;
         }
         
         public void Tick()
@@ -30,20 +31,13 @@ namespace Game
             float frameRateFactor = 60f * Time.deltaTime;
             _player.Position += _player.LookDir * _settings.moveSpeed * frameRateFactor;
 
-          //  if (_inputState.totalDelta.sqrMagnitude > _settings.swipeDeadZoneLenght * _settings.swipeDeadZoneLenght)
-          //      angle = Mathf.Atan2(_inputState.totalDelta.normalized.y, _inputState.totalDelta.normalized.x) * Mathf.Rad2Deg;
 
-            if (Mathf.Abs(_player.Rotation - angle) > _settings.rotationEpslon)
+            if (Mathf.Abs(_player.Rotation - _angle.angle) > _settings.rotationEpslon)
             {
                 float lerpFactor = _settings.turnSpeed * frameRateFactor;
-                _player.Rotation = Mathf.LerpAngle(_player.Rotation, angle, lerpFactor);
+                _player.Rotation = Mathf.LerpAngle(_player.Rotation, _angle.angle, lerpFactor);
                 
-                //_inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
             }
-        }
-        public void LateTick()
-        {
-        
         }
 
         [Serializable]

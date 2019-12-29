@@ -20,6 +20,8 @@ namespace Game
         [Inject]
         CrossingController crossingController;
         [Inject]
+        PlayerFacade Facade;
+        [Inject]
         GameSettingsInstaller.DebugSettings debugSettings;
         [Inject]
         Settings _settings;
@@ -28,6 +30,9 @@ namespace Game
         bool wasOutsideHomeZone;
 
         Vector3 exitPoint;
+        Vector3 position;
+        Vector3 lookDir;
+        float rotation;
         int exitPointIndex;
         Vector3 entryPoint;
         int enterPointIndex;
@@ -57,16 +62,25 @@ namespace Game
 
         public void Initialize()
         {
+
             oldPosition = Position;
             oldInside = true;
+            LastInsideHome = Position;
+            
+        }
 
+        public void OnSpawn()
+        {
+            oldPosition = Position;
+            oldInside = true;
+            LastInsideHome = Position;
+            LookDir = Vector2.right;
+            Rotation = 0;
         }
         public void Tick()
         {
             CheckHomeZoneCrossings();
-
         }
-        List<GameObject> cubes = new List<GameObject>();
 
         private void CheckHomeZoneCrossings()
         {
@@ -74,57 +88,65 @@ namespace Game
 
             if (deltaPosition > _settings.unitPerPoint)
             {
-                bool isInside = Inside;
-
-                Vector2 crossPoint = new Vector2();
-                List<int> p = new List<int>();
-
-                bool isCrossing = Helpers.SegmentCrossesPolyline(Position, oldPosition, zone.BorderPoints, ref crossPoint, p);
-
-                if (oldInside != isInside && !isCrossing)
-                {
-                    Debug.LogError("переход без фиксации пересечения. возможно ошибка построения меша");
-                    Debug.Break();                    
-                }
-
-                if (oldInside != isInside && isCrossing)
-                {
-
-                    if (!isInside)
-                    {
-                        LastInsideHome = oldPosition;
-                        Helpers.PlaceDebugCube(oldPosition, Helpers.GetRandomColor());
-                    }
-
-                    List<Vector2> updatedborder = new List<Vector2>();
-                    oldInside = isInside;
-                    for (int i = 0; i < zone.BorderPoints.Count; i++)
-                    {
-                        updatedborder.Add(zone.BorderPoints[i]);
-                        if (p.Count > 1 && i == p[0])
-                        {
-                            updatedborder.Add(crossPoint);
-                        }
-                    }
-                    zone.SetBorder( updatedborder);
-
-                    line.AddDot(crossPoint);
-                    if (isInside)
-                    {
-                        HandleHomeZoneEnter();
-                    }
-                    else
-                    {
-                        HandleHomeZoneExit();
-                    }                    
-                }
-                else if (!isInside)
-                {
-                    line.AddDot(Position);
-                }
-
+                CheckIfZoneCrossing();
+                CheckIfLineCrossing();
                 oldPosition = Position;
+            }
+        }
 
+        private void CheckIfLineCrossing()
+        {
+            crossingController.CheckLineCrossings(oldPosition, Position, Facade);
+        }
+        private void CheckIfZoneCrossing()
+        {
+            bool isInside = Inside;//кешируем 
+            List<int> borderCrossingEdgeIndexes = new List<int>();
+
+            bool isCrossing = Helpers.SegmentCrossesPolyline(Position, oldPosition, zone.BorderPoints, out Vector2 crossPoint, borderCrossingEdgeIndexes);
+
+            if (oldInside != isInside && !isCrossing)
+            {
+
+                Debug.LogError( Facade.Name +" переход без фиксации пересечения. возможно ошибка построения меша");
+                Debug.LogError( Facade.Name +" внутри: "+Inside);
+                Helpers.PlaceDebugLine(zone.BorderPoints, Helpers.GetRandomColor(), debugSettings.digitCubePrefab, Facade.Name + " dd", "", 0f);
+                Debug.Break();
+            }
+
+            if (oldInside != isInside && isCrossing)
+            {
+
+                if (!isInside)
+                {
+                    LastInsideHome = oldPosition;
+                }
+
+                List<Vector2> updatedborder = new List<Vector2>();
+                oldInside = isInside;
+                for (int i = 0; i < zone.BorderPoints.Count; i++)
+                {
+                    updatedborder.Add(zone.BorderPoints[i]);
+                    if (borderCrossingEdgeIndexes.Count > 1 && i == borderCrossingEdgeIndexes[0])
+                    {
+                        updatedborder.Add(crossPoint);
+                    }
+                }
+                zone.SetBorder(updatedborder);
+
+                line.AddDot(crossPoint);
+                if (isInside)
+                {
+                    HandleHomeZoneEnter();
+                }
+                else
+                {
+                    //HandleHomeZoneExit();
+                }
+            }
+            else if (!isInside)
+            {
+                line.AddDot(Position);
             }
         }
 
@@ -136,20 +158,19 @@ namespace Game
             crossingController.PerformCuts(zone);
             
         }
-
-        void HandleHomeZoneExit()
-        {
-
-
-        }
         public Vector3 LookDir
         {
             get { return view.LookDir; }
+            set{view.LookDir = value;}
         }
         public float Rotation
         {
-            get { return view.Rotation; }
-            set { view.Rotation = value; }
+            get { return rotation; }
+            set
+            {
+                view.Rotation = value;
+                rotation = value;
+            }
         }
         public bool Inside
         {
@@ -160,8 +181,12 @@ namespace Game
         }
         public Vector3 Position
         {
-            get { return view.Position; }
-            set { view.Position = value; }
+            get { return position; }
+            set
+            {
+                position = value;
+                view.Position = value;
+            }
         }
         [System.Serializable]
         public class Settings

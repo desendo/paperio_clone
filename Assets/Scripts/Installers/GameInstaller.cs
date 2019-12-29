@@ -20,9 +20,9 @@ namespace Game
                     .ByNewPrefabInstaller<PlayerInstaller>(_settings.playerPrefab)
                     .UnderTransformGroup("ControlablePlayers"));
             
-            Container.BindFactory<Vector3, Color, string, PlayerFacade, PlayerFacade.BotFactory>()
-                .FromPoolableMemoryPool<Vector3, Color, string, PlayerFacade, BotFacadePool>(poolBinder => poolBinder
-                    .WithInitialSize(5)
+            Container.BindFactory<Vector3, Color, string, BotAIPreset, PlayerFacade, PlayerFacade.BotFactory>()
+                .FromPoolableMemoryPool<Vector3, Color, string, BotAIPreset, PlayerFacade, BotFacadePool>(poolBinder => poolBinder
+                    .WithInitialSize(0)
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<BotInstaller>(_settings.playerPrefab)
                     .UnderTransformGroup("Bots"));            
@@ -31,6 +31,11 @@ namespace Game
             Container.BindInterfacesAndSelfTo<BotSpawner>().AsSingle();
             Container.Bind<CrossingController>().AsSingle();
             Container.Bind<PlayersRegistry>().AsSingle();
+            Container.Bind<ScoresHandler>().AsSingle().NonLazy();
+
+            
+            Container.BindInterfacesAndSelfTo<World>().AsSingle();
+
 
 
         }
@@ -43,7 +48,7 @@ namespace Game
         class PlayerFacadePool : MonoPoolableMemoryPool<Vector3, Color, string, IMemoryPool, PlayerFacade>
         {
         }
-        class BotFacadePool : MonoPoolableMemoryPool<Vector3, Color, string, IMemoryPool, PlayerFacade>
+        class BotFacadePool : MonoPoolableMemoryPool<Vector3, Color, string, BotAIPreset, IMemoryPool, PlayerFacade>
         {
         }
     }

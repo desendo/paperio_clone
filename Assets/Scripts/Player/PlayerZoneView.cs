@@ -6,32 +6,25 @@ using Zenject;
 namespace Game
 {
 
-    public class PlayerZoneView 
+    public class PlayerZoneView: MonoBehaviour
     {
         [Inject]
         PlayerFacade _playerFacade;
         [Inject]
-        Settings _settings;        
-        readonly PlayerZone _playerZone;
+        Settings _settings;
         [Inject]
         GameSettingsInstaller.DebugSettings debugSettings;
         MeshFilter _meshFilter;
         MeshRenderer _meshRenderer;
-        public GameObject PlayerZoneViewContainer { get; private set; }
-
-        public PlayerZoneView(PlayerZone playerZone)
-        {
-            _playerZone = playerZone;
-        }
         internal void UpdateMesh()
         {           
 
-            int[] indices = Triangulator.Triangulate(_playerZone.BorderPoints);
+            int[] indices = Triangulator.Triangulate(_playerFacade.Zone.BorderPoints);
 
-            Vector3[] vertices = new Vector3[_playerZone.BorderPoints.Count];
+            Vector3[] vertices = new Vector3[_playerFacade.Zone.BorderPoints.Count];
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] = new Vector3(_playerZone.BorderPoints[i].x, _playerZone.BorderPoints[i].y, 0);
+                vertices[i] = new Vector3(_playerFacade.Zone.BorderPoints[i].x, _playerFacade.Zone.BorderPoints[i].y, 0);
 
                
             }
@@ -41,19 +34,22 @@ namespace Game
             _mesh.triangles = indices;
             _mesh.RecalculateNormals();
             _mesh.RecalculateBounds();
-            _meshFilter.mesh = _mesh;           
+            _meshFilter.mesh = _mesh;
+
+            _meshRenderer.material.color = _playerFacade.MainColor;
+
 
         }
-        
-        public void Initialize()
+
+        public void Awake()
         {
-            PlayerZoneViewContainer = new GameObject("PlayerZoneViewContainer");
-            PlayerZoneViewContainer.transform.parent = _playerFacade.transform;
-            PlayerZoneViewContainer.transform.position = new Vector3(0, 0, _settings.height);
-            _meshRenderer = PlayerZoneViewContainer.AddComponent<MeshRenderer>();
-            _meshFilter = PlayerZoneViewContainer.AddComponent<MeshFilter>();
+            gameObject.transform.localPosition = new Vector3(
+                gameObject.transform.localPosition.x,
+                gameObject.transform.localPosition.y,
+                _settings.height);
+            _meshRenderer = gameObject.GetComponent<MeshRenderer>();
+            _meshFilter = gameObject.GetComponent<MeshFilter>();
             _meshRenderer.material = _settings.zoneMaterial;
-            _meshRenderer.material.color = _playerFacade.MainColor;
         }
 
         [System.Serializable]

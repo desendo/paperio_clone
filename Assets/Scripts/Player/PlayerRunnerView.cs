@@ -9,7 +9,6 @@ namespace Game
 {
     public class PlayerRunnerView : MonoBehaviour
     {    
-        Rigidbody2D _rigidBody;        
         Renderer[] _renderers;
         Transform _transform;
         
@@ -20,17 +19,20 @@ namespace Game
         {
             _transform = transform;
             _renderers = _transform.GetComponentsInChildren<Renderer>();
-            _rigidBody = GetComponent<Rigidbody2D>();
 
         }
         public Vector3 LookDir
         {
-            get { return _rigidBody.transform.right; }
+            get { return transform.right; }
+            set {
+                transform.right = value; }
         }
         public float Rotation
         {
+            
             get { return _transform.rotation.eulerAngles.z; }
-            set { _transform.eulerAngles = new Vector3(_transform.rotation.eulerAngles.x, _transform.rotation.eulerAngles.y,value); }
+            set {
+                _transform.eulerAngles = new Vector3(_transform.rotation.eulerAngles.x, _transform.rotation.eulerAngles.y,value); }
         }
 
         public Vector3 Position

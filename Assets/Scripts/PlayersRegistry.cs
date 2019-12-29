@@ -16,7 +16,7 @@ namespace Game
         {
             get { return _lines; }
         }
-        public IEnumerable<PlayerFacade> PlayerFacades
+        public List<PlayerFacade> PlayerFacades
         {
             get { return _players; }
         }

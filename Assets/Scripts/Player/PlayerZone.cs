@@ -7,28 +7,30 @@ using Zenject;
 
 namespace Game
 {
-    public class PlayerZone : IInitializable,ITickable
+    public class PlayerZone
     {
         [Inject]
         Settings settings;
         [Inject]
         public PlayerFacade Facade { get; }
         public PlayerZoneView view { get; private set; }
-        private PlayerZoneService service;        
         private List<Vector2> borderPoints;
+        private float _area;
+
         Rect zoneRect;
         [Inject]
-        public void Construct(PlayerZoneView view, PlayerZoneService service)
+        public void Construct(PlayerZoneView view)
         {
+
             this.view = view;
-            this.service = service;
             borderPoints = new List<Vector2>();
             zoneRect = new Rect();
         }
-        public float Area()
+        public float GetArea()
         {
             return Mathf.Abs(Triangulator.Area(BorderPoints));
         }
+        
         public Rect rect
         {
             get => zoneRect;
@@ -36,10 +38,8 @@ namespace Game
         public List<Vector2> BorderPoints
         {
             get => borderPoints;            
-            
         }
-        
-        public PlayerZoneService Service { get => service; }
+        public float Area { get => _area; private set => _area = value; }
 
         [System.Serializable]
         public class Settings
@@ -64,18 +64,15 @@ namespace Game
         {
             SetBorder(
                     Helpers.GenerateCirclePolygon
-                    (
-                        settings.initialRadius,
-                        settings.initialDotsCount,
-                        Facade.Position2D
-                     )
+                    (settings.initialRadius,
+                    settings.initialDotsCount,
+                    Facade.Position)
                 );
         }
 
-        public void Initialize()
+        public void OnSpawn()
         {
             GenerateCirclePolygon();
-            view.Initialize();
             view.UpdateMesh();
         }
 
@@ -91,12 +88,11 @@ namespace Game
                 }
             }
 
-        }
-        public void Tick()
-        {
-            
-            Debug.DrawLine(new Vector3(zoneRect.left, zoneRect.bottom), new Vector3(zoneRect.right, zoneRect.top), Color.black);
+            Area = GetArea();
+
+            SignalsController.Default.Send(new SignalZoneChanged() );
 
         }
+
     }
 }

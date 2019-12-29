@@ -78,7 +78,6 @@ namespace Game
         }
         public static bool CheckIfInPolygon(List<Vector2> points, Vector2 point, bool includeBorders = false)
         {
-
             
             int i, j, nvert = points.Count;
             bool c = false;
@@ -145,7 +144,7 @@ namespace Game
         public static bool SegmentCrossesPolyline(
             Vector2 Point1, Vector2 Point2,
             List<Vector2> polyline, 
-            ref Vector2 crossing, List<int> polylineIndexPair)
+            out Vector2 crossing, List<int> polylineIndexPair)
         {
             crossing = Vector2.zero;
             if (polyline == null || polyline.Count < 2) return false;
@@ -156,7 +155,7 @@ namespace Game
                     int second = i + 1;
                     if (i + 1 == polyline.Count)
                         second = 0;
-                    if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[second], ref crossing))
+                    if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[second], out crossing))
                     {
                         if (polylineIndexPair != null)
                         {
@@ -173,14 +172,14 @@ namespace Game
 
             return false;
         }
-        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, ref Vector2 crossing)
+        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, out Vector2 crossing)
         {
-            return SegmentCrossesPolyline(segment[0], segment[1], polyline, ref crossing, null);
+            return SegmentCrossesPolyline(segment[0], segment[1], polyline, out crossing, null);
         }
 
-        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, ref Vector2 crossing, List<int> polylineIndexPair)
+        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, out Vector2 crossing, List<int> polylineIndexPair)
         {
-            return SegmentCrossesPolyline(segment[0], segment[1], polyline, ref crossing, polylineIndexPair);
+            return SegmentCrossesPolyline(segment[0], segment[1], polyline, out crossing, polylineIndexPair);
         }
 
         public static void SimplifyPolyline(List<Vector2> borderPoints, float distanceSimplifiy)
@@ -202,7 +201,7 @@ namespace Game
             borderPoints = borderPointsUpdated;
         }
 
-        public static bool CheckIfTwoSegmentsIntersects(Vector2 line1Point1, Vector2 line1Point2, Vector2 line2Point1, Vector2 line2Point2, ref Vector2 crossing)
+        public static bool CheckIfTwoSegmentsIntersects(Vector2 line1Point1, Vector2 line1Point2, Vector2 line2Point1, Vector2 line2Point2, out Vector2 crossing)
         {
 
             crossing = Vector2.zero;
@@ -245,11 +244,11 @@ namespace Game
             int vertsCount = initialDotsCount;
             float r = initialRadius;
             float step = 360f / vertsCount;
-            float phase = UnityEngine.Random.value * 360f * 3.1415f;
+            float phase = UnityEngine.Random.value * 360f * 3.14159265359f;
             //float phase = 0;
             for (int i = 0; i < vertsCount; i++)
             {
-                float rad = (i * step) / 180.0f * 3.1415f + phase;
+                float rad = (i * step) / 180.0f * 3.14159265359f + phase;
                 float x = (r * Mathf.Cos(rad));
                 float y = (r * Mathf.Sin(rad));
                 border.Add(new Vector2(x, y) + position2D);
