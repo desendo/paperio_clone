@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameSettingsInstaller
   m_EditorClassIdentifier: 
   playerMoveHandlerSettings:
-    moveSpeed: 0.1
+    moveSpeed: 0.2
     turnSpeed: 0.28
     rotationEpslon: 0.09
     swipeDeadZoneLenght: 0.16
@@ -46,9 +46,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 21b9adf8a75f42f459c003b8b88834c5, type: 2}
     - {fileID: 11400000, guid: 8a4f7f4e2ee9a664dad34a1a56acf668, type: 2}
   gameControllerSetting:
-    maximumBots: 3
+    maximumBots: 0
   worldSettings:
-    radius: 40
+    radius: 50
     vertexCount: 128
   debug:
     debugMaterial: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}

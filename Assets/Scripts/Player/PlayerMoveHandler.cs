@@ -9,6 +9,7 @@ namespace Game
 {
     public class PlayerMoveHandler : ITickable,ILateTickable
     {
+        [Inject] World world;
         readonly Settings _settings;
         readonly PlayerRunner _player;
         readonly InputState _inputState;
@@ -31,6 +32,8 @@ namespace Game
             float frameRateFactor = 60f * Time.deltaTime;
             _player.Position += _player.LookDir * _settings.moveSpeed * frameRateFactor;
 
+            _player.Position = TrimPositionToWorldBounds(_player.Position);
+
             if (_inputState.totalDelta.sqrMagnitude > _settings.swipeDeadZoneLenght * _settings.swipeDeadZoneLenght)
             {
                float  angle = Mathf.Atan2(_inputState.totalDelta.normalized.y, _inputState.totalDelta.normalized.x) * Mathf.Rad2Deg;
@@ -44,7 +47,21 @@ namespace Game
                 _player.Rotation = Mathf.LerpAngle(_player.Rotation, angle, lerpFactor);                
             }
         }
-        
+
+        private Vector3 TrimPositionToWorldBounds(Vector3 position )
+        {
+            Vector2 distToWorldCenter = (Vector2)position - world.Center;
+            
+            float deltaMag  = distToWorldCenter.magnitude;
+            if (deltaMag < world.Radius )
+                return position;
+            else
+            {
+                var dir = distToWorldCenter.normalized;
+                Vector2 positionUpdated = dir * world.Radius + world.Center;
+                return new Vector3(positionUpdated.x, positionUpdated.y, position.z);
+             }
+        }
         public void LateTick()
         {
             if (cameraTransform == null)

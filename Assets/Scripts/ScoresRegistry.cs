@@ -12,10 +12,11 @@ namespace Game
         PlayersRegistry playersRegistry;
         [Inject]
         World world;
+        [Inject]
+        GuiHandler guiHandler;
         public ScoresHandler()
         {
             SignalsController.Default.Add(this);
-            Debug.Log("ScoresHandler");
         }
         ~ScoresHandler()
         {
@@ -23,16 +24,12 @@ namespace Game
         }
         public void HandleSignal(SignalZoneChanged arg)
         {
-            //List<PlayerZone> SortedList = playersRegistry.Zones.OrderByDescending(o => o.Area).ToList();
-            //Debug.Log("zone changed " + arg.area / world.Area * 100f +"%");
             UpdateScores();
-
-
         }
 
         public void HandleSignal(SignalDie arg)
         {
-            
+            UpdateScores();
         }
 
         
@@ -41,13 +38,32 @@ namespace Game
         {
             List<PlayerFacade> players = new List<PlayerFacade>(playersRegistry.PlayerFacades);
 
-            players = players.OrderBy(x => x.Zone.Area).ToList();
+            players = players.OrderByDescending(x => x.Zone.Area).ToList();
+
+            List<ScoreData> scoreData = new List<ScoreData>();
+            foreach (var player in players)
+            {
+                scoreData.Add(new ScoreData()
+                {
+                    areaNormalized = player.Zone.Area / world.Area,
+                    color = player.MainColor,
+                    isPlayer = !player.IsBot,
+                    kills = player.Kills,
+                    name = player.name
+                }
+                );
+            }
+            guiHandler.SetScores(scoreData);
+
 
         }
         public struct ScoreData
         {
             public float areaNormalized;
             public int kills;
+            public Color color;
+            public string name;
+            public bool isPlayer;
 
         }
     }

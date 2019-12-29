@@ -4,13 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public struct SignalZoneBorderPass
-    {
-        public PlayerRunner playerRunner;
-        public PlayerZone zone;
-        public bool isExiting;
-        public int nearestBorderPointIndex;
-    }
+
     public struct SignalDie
     {
         public PlayerFacade victim;
@@ -18,9 +12,7 @@ namespace Game
     }
     public struct SignalZoneChanged
     {
-       // public PlayerFacade zoneHolder;        
-        
-        //public float area;        
+      
     }
 
 }

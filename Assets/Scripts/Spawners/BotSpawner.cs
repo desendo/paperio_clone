@@ -14,10 +14,10 @@ namespace Game
         GameSettingsInstaller.AISettings aISettings;
         private static List<string> names = new List<string>()
         {
-            "Cybernated Machine",
-            "Exploration Device",
-            "Responsive Golem",
-            "Extra-Terrestrial Emulator",
+            "Machine",
+            "Device",
+            "Golem",
+            "Emulator",
             "Boomer",
             "Ratcher",
             "Beta",

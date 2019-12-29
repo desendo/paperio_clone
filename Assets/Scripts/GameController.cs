@@ -18,13 +18,15 @@ namespace Game
         World world;
         [Inject]
         Settings settings;
+        [Inject]
+        PlayerZone.Settings playerZoneSettings;
         public void Initialize()
         {
             var bot_spawner = Observable.Interval(TimeSpan.FromMilliseconds(1000)).Subscribe(x => 
             {
                 if (CurrentBotsCount < settings.maximumBots)
                 {
-                    var v = UnityEngine.Random.insideUnitCircle * world.Radius;
+                    var v = UnityEngine.Random.insideUnitCircle * (world.Radius - playerZoneSettings.initialRadius);
                     _botSpawner.SpawnBot(v);
 
                 }
@@ -34,7 +36,7 @@ namespace Game
             {
                 if (CurrentPlayerCount < 1)
                 {
-                    var v = UnityEngine.Random.insideUnitCircle * world.Radius;
+                    var v = UnityEngine.Random.insideUnitCircle * (world.Radius - playerZoneSettings.initialRadius);
                     _playerSpawner.SpawnPlayer(v);
                 }
             });

@@ -95,9 +95,11 @@ namespace Game
         }
         private static void HandleCutOff(PlayerFacade killer, PlayerLine killedLine)
         {
+            
             //todo отсрочку килла как в оригинале
             killedLine.Facade.Die();
-            killer.OnKill();
+            if(killedLine.Facade!=killer)
+                killer.OnKill();
         }
 
 

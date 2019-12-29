@@ -70,7 +70,7 @@ namespace Game
         }
         public void OnDespawned()
         {
-            
+            Kills = 0;
             Line.ClearLine();
             _registry.RemovePlayer(this);
             
@@ -82,7 +82,6 @@ namespace Game
         }
         public void Dispose()
         {
-            Debug.Log("disose " + Name);
         }
         public bool IsBot
         {
@@ -123,12 +122,14 @@ namespace Game
         }
         public void OnKill()
         {
-
+            Kills++;
         }
         public PlayerLine Line
         {
             get => _line;
         }
+        public int Kills { get; private set; }
+
         public class PlayerFactory : PlaceholderFactory<Vector3, Color, string, PlayerFacade>
         {
         }
