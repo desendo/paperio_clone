@@ -9,17 +9,14 @@ namespace Game
 {
     public class PlayerRunnerView : MonoBehaviour
     {    
-        Renderer[] _renderers;
         Transform _transform;
         
         [Inject]
         PlayerFacade playerFacade;
-
+        [SerializeField] GameObject crown;
         public void Awake()
         {
             _transform = transform;
-            _renderers = _transform.GetComponentsInChildren<Renderer>();
-
         }
         public Vector3 LookDir
         {
@@ -34,7 +31,10 @@ namespace Game
             set {
                 _transform.eulerAngles = new Vector3(_transform.rotation.eulerAngles.x, _transform.rotation.eulerAngles.y,value); }
         }
-
+        public void SetCrown(bool isOn)
+        {
+            crown.SetActive(isOn);
+        }
         public Vector3 Position
         {
             get { return _transform.position; }

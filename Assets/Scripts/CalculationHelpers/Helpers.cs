@@ -30,6 +30,27 @@ namespace Game
 
     public static class Helpers 
     {
+        public static float AngleBetweenVector2(Vector2 vec1, Vector2 vec2)
+        {
+            Vector2 vec1Rotated90 = new Vector2(-vec1.y, vec1.x);
+            float sign = (Vector2.Dot(vec1Rotated90, vec2) < 0) ? -1.0f : 1.0f;
+            return Vector2.Angle(vec1, vec2) * sign;
+        }
+
+        public static Vector3 TrimPositionToWorldBounds(Vector3 position, float radius, Vector2 center)
+        {
+            Vector2 distToWorldCenter = (Vector2)position - center;
+
+            float deltaMag = distToWorldCenter.magnitude;
+            if (deltaMag < radius)
+                return position;
+            else
+            {
+                var dir = distToWorldCenter.normalized;
+                Vector2 positionUpdated = dir * radius + center;
+                return new Vector3(positionUpdated.x, positionUpdated.y, position.z);
+            }
+        }
 
         public static void PlaceDebugLine(List<Vector2> line, Color color, GameObject prefab, string contextName, string prefix, float expanse)
         {

@@ -8,16 +8,16 @@ namespace Game
     [CreateAssetMenu(fileName = "bot AI preset")]
     public class BotAIPreset : ScriptableObject
     {
+        public string presetName;
         public float minimumDistanceToTravel;
         public float maximumDistanceToTravel;
         
         public float maximumDistanceFromRoot;
-        public float distance;
+        public float minDistanceToAttack;
+        public float maxDistanceToAttack;
 
-        public bool overrideSensorLenght;
-        public float sensorLenght;
-
-        public bool overrideSensorCount;
+        public bool overrideDefaultSensorsParams;
+        public float sensorLenght;        
         public int sensorCount;
 
 

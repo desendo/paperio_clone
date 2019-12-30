@@ -10,5 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4eb40a76e43a4aa4584b70276acb6096, type: 3}
-  m_Name: normal
+  m_Name: balanced
   m_EditorClassIdentifier: 
+  presetName: balanced
+  minimumDistanceToTravel: 0.4
+  maximumDistanceToTravel: 1.5
+  maximumDistanceFromRoot: 7
+  minDistanceToAttack: 3
+  maxDistanceToAttack: 5
+  overrideDefaultSensorsParams: 0
+  sensorLenght: 0
+  sensorCount: 0

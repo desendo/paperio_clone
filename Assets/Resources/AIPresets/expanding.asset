@@ -12,3 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb40a76e43a4aa4584b70276acb6096, type: 3}
   m_Name: expanding
   m_EditorClassIdentifier: 
+  presetName: expanding
+  minimumDistanceToTravel: 3
+  maximumDistanceToTravel: 4
+  maximumDistanceFromRoot: 7
+  minDistanceToAttack: 0
+  maxDistanceToAttack: 0.2
+  overrideDefaultSensorsParams: 0
+  sensorLenght: 0
+  sensorCount: 0

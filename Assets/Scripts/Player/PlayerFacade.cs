@@ -49,6 +49,11 @@ namespace Game
             OnSpawn(position, color, name, pool);
         }
 
+        public void SetCrown(bool isOn)
+        {
+            _runner.SetCrown(isOn);
+        }
+
         private void OnSpawn(Vector3 position, Color color, string name, IMemoryPool pool)
         {
             _pool = pool;
@@ -72,9 +77,7 @@ namespace Game
         {
             Kills = 0;
             Line.ClearLine();
-            _registry.RemovePlayer(this);
-            
-            
+            _registry.RemovePlayer(this);            
         }
         public Color MainColor
         {
@@ -92,9 +95,7 @@ namespace Game
             get => _zone.GetArea();
         }
         public void Die()
-        {
-            Debug.Log("Goodbye, "+Name+". You're dead now.");
-            
+        {            
             _pool.Despawn(this);
         }
 
@@ -116,6 +117,14 @@ namespace Game
             get => _runner.Position;
             set => _runner.Position = value;
         }
+        public float Rotation
+        {
+            get => _runner.Rotation;            
+        }
+        public Vector3 LookDir
+        {
+            get => _runner.LookDir;
+        }
         public void CutOff()
         {
            // _runner.CutOff();
@@ -135,8 +144,6 @@ namespace Game
         }
         public class BotFactory : PlaceholderFactory<Vector3, Color, string,BotAIPreset, PlayerFacade>
         {
-        }
-
-        
+        }        
     }
 }

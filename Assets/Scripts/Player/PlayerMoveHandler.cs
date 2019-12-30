@@ -32,7 +32,7 @@ namespace Game
             float frameRateFactor = 60f * Time.deltaTime;
             _player.Position += _player.LookDir * _settings.moveSpeed * frameRateFactor;
 
-            _player.Position = TrimPositionToWorldBounds(_player.Position);
+            _player.Position = Helpers.TrimPositionToWorldBounds(_player.Position,world.Radius,world.Center);
 
             if (_inputState.totalDelta.sqrMagnitude > _settings.swipeDeadZoneLenght * _settings.swipeDeadZoneLenght)
             {
@@ -48,20 +48,7 @@ namespace Game
             }
         }
 
-        private Vector3 TrimPositionToWorldBounds(Vector3 position )
-        {
-            Vector2 distToWorldCenter = (Vector2)position - world.Center;
-            
-            float deltaMag  = distToWorldCenter.magnitude;
-            if (deltaMag < world.Radius )
-                return position;
-            else
-            {
-                var dir = distToWorldCenter.normalized;
-                Vector2 positionUpdated = dir * world.Radius + world.Center;
-                return new Vector3(positionUpdated.x, positionUpdated.y, position.z);
-             }
-        }
+
         public void LateTick()
         {
             if (cameraTransform == null)

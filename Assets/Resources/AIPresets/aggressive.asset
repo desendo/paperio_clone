@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb40a76e43a4aa4584b70276acb6096, type: 3}
   m_Name: aggressive
   m_EditorClassIdentifier: 
-  minimumDistanceToTravel: 0
-  maximumDistanceToTravel: 0
-  maximumDistanceFromRoot: 0
-  distance: 0
-  overrideSensorLenght: 0
+  presetName: aggressive
+  minimumDistanceToTravel: 1
+  maximumDistanceToTravel: 2
+  maximumDistanceFromRoot: 4
+  minDistanceToAttack: 5
+  maxDistanceToAttack: 6
+  overrideDefaultSensorsParams: 0
   sensorLenght: 0
-  overrideSensorCount: 0
   sensorCount: 0

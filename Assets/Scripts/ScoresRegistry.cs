@@ -41,8 +41,18 @@ namespace Game
             players = players.OrderByDescending(x => x.Zone.Area).ToList();
 
             List<ScoreData> scoreData = new List<ScoreData>();
-            foreach (var player in players)
+
+            for (int i = 0; i < players.Count; i++)
             {
+                
+
+                PlayerFacade player = players[i];
+
+                if (i == 0)
+                    player.SetCrown(true);
+                else
+                    player.SetCrown(false);
+
                 scoreData.Add(new ScoreData()
                 {
                     areaNormalized = player.Zone.Area / world.Area,

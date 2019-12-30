@@ -32,8 +32,9 @@ namespace Game
 
             _mesh.vertices = vertices;
             _mesh.triangles = indices;
-            _mesh.RecalculateNormals();
+            
             _mesh.RecalculateBounds();
+            _mesh.RecalculateNormals();
             _meshFilter.mesh = _mesh;
 
             _meshRenderer.material.color = _playerFacade.MainColor;

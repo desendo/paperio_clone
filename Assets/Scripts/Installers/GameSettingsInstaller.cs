@@ -51,7 +51,10 @@ namespace Game
         [Serializable]
         public class AISettings
         {
-            public float sensorsDefaultDistance;
+            public float aiCalculationsDeltaTime;
+            public float sensorsDefaultMaxDistance;
+            public float sensorsDefaultSteps;
+            public int defaultSensorsCount;
             public BotAIPreset[] presets;
         }
     }

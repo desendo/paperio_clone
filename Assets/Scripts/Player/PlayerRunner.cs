@@ -59,6 +59,10 @@ namespace Game
 
         }
 
+        public void SetCrown(bool isOn)
+        {
+            view.SetCrown(isOn);
+        }
 
         public void Initialize()
         {

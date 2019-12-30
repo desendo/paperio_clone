@@ -31,7 +31,9 @@ namespace Game
             BotStateGrow grow, BotStateAttack attack, BotStateRetreat retreat
             )
         {
-           _states = new List<IBotState>{ grow, attack, retreat };
+            Debug.Log("BotStateManager construct");
+
+            _states = new List<IBotState>{ grow, attack, retreat };
         }
         public BotState CurrentState
         {
@@ -45,7 +47,6 @@ namespace Game
         {
             if (_currentState == state)
             {
-                // Already in state
                 return;
             }
             _currentState = state;

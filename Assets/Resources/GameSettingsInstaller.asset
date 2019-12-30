@@ -38,15 +38,17 @@ MonoBehaviour:
     width: 0.5
     height: -0.02
   aISettings:
-    sensorsDefaultDistance: 4
+    aiCalculationsDeltaTime: 0.5
+    sensorsDefaultMaxDistance: 0
+    sensorsDefaultSteps: 0
+    defaultSensorsCount: 0
     presets:
     - {fileID: 11400000, guid: 5bd2e6939d964194fafe97cc049dd9ba, type: 2}
     - {fileID: 11400000, guid: 5a388318ab16b33468d18b82619c7e71, type: 2}
     - {fileID: 11400000, guid: ad311ec5cb9971240a810543d072d9d3, type: 2}
-    - {fileID: 11400000, guid: 21b9adf8a75f42f459c003b8b88834c5, type: 2}
     - {fileID: 11400000, guid: 8a4f7f4e2ee9a664dad34a1a56acf668, type: 2}
   gameControllerSetting:
-    maximumBots: 0
+    maximumBots: 9
   worldSettings:
     radius: 50
     vertexCount: 128
