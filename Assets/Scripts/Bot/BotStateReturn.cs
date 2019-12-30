@@ -16,7 +16,6 @@ namespace Game
 
         public void EnterState()
         {
-            Debug.Log("retreat " + facade.preset.name);
         }
 
         public void ExitState()

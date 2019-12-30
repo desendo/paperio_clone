@@ -31,7 +31,6 @@ namespace Game
             BotStateGrow grow, BotStateAttack attack, BotStateRetreat retreat
             )
         {
-            Debug.Log("BotStateManager construct");
 
             _states = new List<IBotState>{ grow, attack, retreat };
         }

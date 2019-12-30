@@ -49,10 +49,12 @@ namespace Game
                 }
                 if (!playerinFirstThree && score.isPlayer)
                 {
+                    kills.text = "x " + (score.kills).ToString();
+
                     panels[panels.Length - 1].gameObject.SetActive(true);
                     panels[panels.Length - 1].SetValues(score.color, text);
                 }
-                else
+                else if(playerinFirstThree)
                     panels[panels.Length - 1].gameObject.SetActive(false);
             }
 
