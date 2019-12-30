@@ -8,7 +8,6 @@ namespace Game
 {
     public class PlayerLine :ITickable,IInitializable
     {
-        //todo выделить view class
         [Inject]
         GameSettingsInstaller.DebugSettings _debug;
         [Inject]
@@ -39,7 +38,7 @@ namespace Game
         {
             get => lineRect;
         }
-        public List<Vector2> LineDots
+        public List<Vector2> Points
         {
             get => _lineDots;            
         }
@@ -62,26 +61,10 @@ namespace Game
         {
             get => new Vector2[2] { PreLastPoint, LastPoint };
         }
-        public int InsertPointToLastSegment(Vector2 crossing)
-        {
-            int index = 0;
-            if (_lineDots.Count > 0)
-            {
-                _lineDots.Insert(_lineDots.Count - 1, crossing);
-                index = _lineDots.Count - 1;
-            }
-
-            return index;
-        }
-
-
         public void AddDot(Vector3 pos)
         {
-
-           // Helpers.PlaceCube(pos, Color.red);
             _lineDots.Add(pos);
-            if(_lineDots.Count>1)
-                lineCrossingController.OnLinePointAdded(this);
+            
             if(_lineDots.Count==1)
                 lineRect.InitWithPosition(pos);
             else
@@ -90,34 +73,37 @@ namespace Game
         public void ClearLine()
         {
             _lineDots.Clear();
+            lineRenderer.positionCount = 0;
             lineRect.Reset();
         }
 
 
         public void Tick()
         {
-            Debug.DrawLine(new Vector3(lineRect.left, lineRect.bottom), new Vector3(lineRect.right, lineRect.top),Color.red);
+            UpdateView();
+        }
 
-
-            lineRenderer.positionCount = LineDots.Count;
-            Vector3[] lineDotsArray = new Vector3[LineDots.Count];
-            for (int i = 0; i < lineDotsArray.Length; i++)
+        private void UpdateView()
+        {
+            lineRenderer.positionCount = Points.Count + 1;
+            Vector3[] lineDotsArray = new Vector3[Points.Count + 1];
+            for (int i = 0; i < Points.Count; i++)
             {
-                lineDotsArray[i] = new Vector3(LineDots[i].x, LineDots[i].y, _settings.height);
+                lineDotsArray[i] = new Vector3(Points[i].x, Points[i].y, _settings.height);
             }
+            lineDotsArray[Points.Count] = new Vector3(_playerRunner.Position.x, _playerRunner.Position.y, _settings.height);
             lineRenderer.SetPositions(lineDotsArray);
+            lineRenderer.material.color = new Color(Facade.MainColor.r, Facade.MainColor.g, Facade.MainColor.b, lineRenderer.material.color.a);
+
         }
 
 
-        
         public void Initialize()
         {
             lineRendererContainer = new GameObject("Line View Container");
             lineRendererContainer.transform.parent = Facade.transform;
             lineRenderer = lineRendererContainer.AddComponent<LineRenderer>();
             lineRenderer.material = _settings.lineMaterial;
-            
-            lineRenderer.material.color = Facade.MainColor; 
             lineRenderer.startWidth = _settings.width;
             lineRenderer.endWidth = _settings.width;
         }

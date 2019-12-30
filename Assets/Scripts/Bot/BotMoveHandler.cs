@@ -7,18 +7,21 @@ using Zenject;
 
 namespace Game
 {
-    public class BotMoveHandler : ITickable,ILateTickable
+    public class BotMoveHandler : ITickable
     {
         readonly PlayerMoveHandler.Settings _settings;
         readonly PlayerRunner _player;
+        readonly TargetAngleState _angle;
+        readonly World _world;
 
         private Vector2 currentRotatePoint;
-        private float angle;
 
-        public BotMoveHandler(PlayerMoveHandler.Settings settings, PlayerRunner player)
+        public BotMoveHandler(PlayerMoveHandler.Settings settings, PlayerRunner player, TargetAngleState angle, World world)
         {
             _settings = settings;
             _player = player;
+            _angle = angle;
+            _world = world;
         }
         
         public void Tick()
@@ -29,21 +32,14 @@ namespace Game
         {
             float frameRateFactor = 60f * Time.deltaTime;
             _player.Position += _player.LookDir * _settings.moveSpeed * frameRateFactor;
+            _player.Position = Helpers.TrimPositionToWorldBounds(_player.Position, _world.Radius, _world.Center);
 
-          //  if (_inputState.totalDelta.sqrMagnitude > _settings.swipeDeadZoneLenght * _settings.swipeDeadZoneLenght)
-          //      angle = Mathf.Atan2(_inputState.totalDelta.normalized.y, _inputState.totalDelta.normalized.x) * Mathf.Rad2Deg;
-
-            if (Mathf.Abs(_player.Rotation - angle) > _settings.rotationEpslon)
+            if (Mathf.Abs(_player.Rotation - _angle.angle) > _settings.rotationEpslon)
             {
                 float lerpFactor = _settings.turnSpeed * frameRateFactor;
-                _player.Rotation = Mathf.LerpAngle(_player.Rotation, angle, lerpFactor);
+                _player.Rotation = Mathf.LerpAngle(_player.Rotation, _angle.angle, lerpFactor);
                 
-                //_inputState.totalDelta = Vector2.Lerp(_inputState.totalDelta, Vector2.zero, lerpFactor);
             }
-        }
-        public void LateTick()
-        {
-        
         }
 
         [Serializable]

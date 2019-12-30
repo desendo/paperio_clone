@@ -2,38 +2,126 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 namespace Game
 {
+
+    static class Extensions
+    {
+
+        public static T CircleNext<T>(this List<T> list, int index)
+        {            
+            if (index == list.Count - 1)
+                return list[0];
+            else 
+                return list[index + 1];
+        }
+
+        public static T CirclePrev<T>(this List<T> list, int index)
+        {
+            if (index == 0)
+                return list[list.Count - 1];
+            else
+                return list[index - 1];
+        }
+
+    }
+
+
     public static class Helpers 
     {
-        public static GameObject  PlaceCube(Vector3 pos, Color color  )
+        public static float AngleBetweenVector2(Vector2 vec1, Vector2 vec2)
         {
-            GameObject t = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Vector2 vec1Rotated90 = new Vector2(-vec1.y, vec1.x);
+            float sign = (Vector2.Dot(vec1Rotated90, vec2) < 0) ? -1.0f : 1.0f;
+            return Vector2.Angle(vec1, vec2) * sign;
+        }
+
+        public static Vector3 TrimPositionToWorldBounds(Vector3 position, float radius, Vector2 center)
+        {
+            Vector2 distToWorldCenter = (Vector2)position - center;
+
+            float deltaMag = distToWorldCenter.magnitude;
+            if (deltaMag < radius)
+                return position;
+            else
+            {
+                var dir = distToWorldCenter.normalized;
+                Vector2 positionUpdated = dir * radius + center;
+                return new Vector3(positionUpdated.x, positionUpdated.y, position.z);
+            }
+        }
+
+        public static void PlaceDebugLine(List<Vector2> line, Color color, GameObject prefab, string contextName, string prefix, float expanse)
+        {
+
+            Vector2 median = line[0];
+            for (int i = 1; i < line.Count; i++)
+            {
+                median += line[i];
+            }
+
+            var context = GameObject.Find(contextName);
+            if (context == null)
+                context = new GameObject(contextName);
+            foreach (Transform item in context.transform)
+            {
+                GameObject.Destroy(item.gameObject);
+            }
+            Transform par = context.transform;
+            for (int i = 0; i < line.Count; i++)
+            {
+                
+                Vector2 shift = (line[i] - median).normalized;
+                var go = PlaceDebugCube(line[i] + shift*expanse, color, prefab, prefix+" "+i.ToString());
+                go.transform.parent = par;
+            }
+        }
+        public static GameObject PlaceDebugCube(Vector3 pos, Color color, GameObject prefab = null, string text= "")
+        {
+            GameObject t;
+            if (prefab == null)
+                t = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            else
+                t = GameObject.Instantiate(prefab);
             t.transform.position = pos;
             t.transform.localScale *= 0.3f;
-            t.GetComponent<MeshRenderer>().material.color = color;
+            t.transform.GetComponentInChildren<MeshRenderer>().material.color = color;
+            if (!string.IsNullOrEmpty(text))
+            {
+                var tmpro = t.transform.GetComponentInChildren<TMPro.TMP_Text>();
+                tmpro.text = text;
+                t.name = text;
+
+            }
 
             return t;
         }
-        public static bool CheckIfInPolygon(List<Vector2> polygon, Vector2 point)
+        public static bool CheckIfInPolygon(List<Vector2> points, Vector2 point, bool includeBorders = false)
         {
-
-            float x = point.x;
-            float y = point.y;
+            
+            int i, j, nvert = points.Count;
             bool c = false;
-            for (int i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
+
+            for (i = 0, j = nvert - 1; i < nvert; j = i++)
             {
-                
-                if ((
-                    (polygon[i].y < polygon[j].y) && (polygon[i].y <= y) && (y <= polygon[j].y) &&
-                    ((polygon[j].y - polygon[i].y) * (x - polygon[i].x) > (polygon[j].x - polygon[i].x) * (y - polygon[i].y))
-                ) || (
-                    (polygon[i].y > polygon[j].y) && (polygon[j].y <= y) && (y <= polygon[i].y) &&
-                    ((polygon[j].y - polygon[i].y) * (x - polygon[i].x) < (polygon[j].x - polygon[i].x) * (y - polygon[i].y))
-                ))
-                    c = !c;
+                if (includeBorders)
+                {
+                    if (((points[i].y >= point.y) != (points[j].y >= point.y)) &&
+                    (point.x <= (points[j].x - points[i].x) * (point.y - points[i].y) / (points[j].y - points[i].y) + points[i].x)
+                  )
+                        c = !c;
+                }
+                else
+                {
+                    if (((points[i].y > point.y) != (points[j].y > point.y)) &&
+                 (point.x < (points[j].x - points[i].x) * (point.y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
+                        c = !c;
+                }
             }
+
             return c;
+
   
         }
         
@@ -51,12 +139,7 @@ namespace Game
             bool overlaps = false;
 
             return overlaps;
-        }
-
-        public static void InsertPointOnCrossing(List<Vector2> borderPoints, Vector2 pointPosition)
-        {
-            
-        }
+        }       
 
         internal static int GetNearestBorderPointTo(List<Vector2> borderPoints, Vector3 position)
         {
@@ -79,19 +162,30 @@ namespace Game
             return indexOfNearest;
         }
 
-        public static bool SegmentCrossesPolyline(Vector2 Point1, Vector2 Point2, List<Vector2> polyline, ref Vector2 crossing, bool split = false)
+        public static bool SegmentCrossesPolyline(
+            Vector2 Point1, Vector2 Point2,
+            List<Vector2> polyline, 
+            out Vector2 crossing, List<int> polylineIndexPair)
         {
             crossing = Vector2.zero;
             if (polyline == null || polyline.Count < 2) return false;
             else
             {
-
-                for (int i = 0; i < polyline.Count - 1; i++)
+                for (int i = 0; i < polyline.Count; i++)
                 {
-                    if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[i + 1], ref crossing))
+                    int second = i + 1;
+                    if (i + 1 == polyline.Count)
+                        second = 0;
+                    if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[second], out crossing))
                     {
-                        if (split)
-                            polyline.Insert(i, crossing);
+                        if (polylineIndexPair != null)
+                        {
+                            int i2 = i + 1;
+                            if (i2 >= polyline.Count)
+                                i2 = 0;
+                            polylineIndexPair.Add(i);
+                            polylineIndexPair.Add(i2);
+                        }
                         return true;
                     }
                 }
@@ -99,17 +193,36 @@ namespace Game
 
             return false;
         }
-        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, ref Vector2 crossing)
+        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, out Vector2 crossing)
         {
-            return SegmentCrossesPolyline(segment[0], segment[1], polyline, ref crossing);
+            return SegmentCrossesPolyline(segment[0], segment[1], polyline, out crossing, null);
+        }
+
+        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, out Vector2 crossing, List<int> polylineIndexPair)
+        {
+            return SegmentCrossesPolyline(segment[0], segment[1], polyline, out crossing, polylineIndexPair);
         }
 
         public static void SimplifyPolyline(List<Vector2> borderPoints, float distanceSimplifiy)
         {
-            //to do Алгоритм Рамера — Дугласа — Пекера
+
+            var borderArray = borderPoints.ToArray();
+            List<Vector2> borderPointsUpdated= new List<Vector2>(); 
+            for (int i = 0; i < borderArray.Length; i++)
+            {
+                int i2 = i + 1;
+                if (i2 == borderArray.Length) i2 = 0;
+                var delta = (borderArray[i] - borderArray[i2]).sqrMagnitude;
+                if (delta > distanceSimplifiy)
+                {
+
+                    borderPointsUpdated.Add(borderArray[i]);
+                }
+            }
+            borderPoints = borderPointsUpdated;
         }
 
-        public static bool CheckIfTwoSegmentsIntersects(Vector2 line1Point1, Vector2 line1Point2, Vector2 line2Point1, Vector2 line2Point2, ref Vector2 crossing)
+        public static bool CheckIfTwoSegmentsIntersects(Vector2 line1Point1, Vector2 line1Point2, Vector2 line2Point1, Vector2 line2Point2, out Vector2 crossing)
         {
 
             crossing = Vector2.zero;
@@ -139,12 +252,11 @@ namespace Game
                     return false;
 
                 crossing.x = line1Point1.x + cut1.x * Mathf.Abs(prod1) / Mathf.Abs(prod2 - prod1);
-                crossing.y = line1Point1.y + cut1.y * Mathf.Abs(prod1) / Mathf.Abs(prod2 - prod1);
-
-
+                crossing.y = line1Point1.y + cut1.y * Mathf.Abs(prod1) / Mathf.Abs(prod2 - prod1);                
+                
                 return true;
 
-            }                
+            }
         }
 
         internal static List<Vector2> GenerateCirclePolygon(float initialRadius, int initialDotsCount, Vector2 position2D)
@@ -153,10 +265,11 @@ namespace Game
             int vertsCount = initialDotsCount;
             float r = initialRadius;
             float step = 360f / vertsCount;
-            float phase = UnityEngine.Random.value * 360f * 3.1415f;
+            float phase = UnityEngine.Random.value * 360f * 3.14159265359f;
+            //float phase = 0;
             for (int i = 0; i < vertsCount; i++)
             {
-                float rad = (i * step) / 180.0f * 3.1415f + phase;
+                float rad = (i * step) / 180.0f * 3.14159265359f + phase;
                 float x = (r * Mathf.Cos(rad));
                 float y = (r * Mathf.Sin(rad));
                 border.Add(new Vector2(x, y) + position2D);

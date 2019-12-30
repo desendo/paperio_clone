@@ -4,16 +4,15 @@ using UnityEngine;
 
 namespace Game
 {
-    public struct SignalZoneBorderPass
-    {
-        public PlayerRunner playerRunner;
-        public PlayerZone zone;
-        public bool isExiting;
-        public int nearestBorderPointIndex;
-    }
+
     public struct SignalDie
     {
-
+        public PlayerFacade victim;
+        public PlayerFacade murderer;
+    }
+    public struct SignalZoneChanged
+    {
+      
     }
 
 }

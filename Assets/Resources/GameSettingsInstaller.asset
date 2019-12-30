@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameSettingsInstaller
   m_EditorClassIdentifier: 
   playerMoveHandlerSettings:
-    moveSpeed: 0.1
+    moveSpeed: 0.2
     turnSpeed: 0.28
     rotationEpslon: 0.09
     swipeDeadZoneLenght: 0.16
@@ -25,7 +25,7 @@ MonoBehaviour:
     worldRadius: 100
   playerZoneSettings:
     initialRadius: 4
-    initialDotsCount: 26
+    initialDotsCount: 17
     debugFirstPoint: {fileID: 2100000, guid: e475b5eab05d89040ac9618e72ffb150, type: 2}
     debugSecondPoint: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}
     debugOtherPoints: {fileID: 2100000, guid: fd8fac601ff7cfc48b4d4a7f9fad9a68, type: 2}
@@ -37,5 +37,25 @@ MonoBehaviour:
     lineMaterial: {fileID: 2100000, guid: 6818599dfaf7444438e16170e09d053a, type: 2}
     width: 0.5
     height: -0.02
+  aISettings:
+    aiCalculationsDeltaTime: 0.5
+    sensorsDefaultMaxDistance: 0
+    sensorsDefaultSteps: 0
+    defaultSensorsCount: 0
+    presets:
+    - {fileID: 11400000, guid: 5bd2e6939d964194fafe97cc049dd9ba, type: 2}
+    - {fileID: 11400000, guid: 5a388318ab16b33468d18b82619c7e71, type: 2}
+    - {fileID: 11400000, guid: ad311ec5cb9971240a810543d072d9d3, type: 2}
+    - {fileID: 11400000, guid: 8a4f7f4e2ee9a664dad34a1a56acf668, type: 2}
+  gameControllerSetting:
+    maximumBots: 9
+  worldSettings:
+    radius: 50
+    vertexCount: 128
   debug:
-    debugMaterial: {fileID: 0}
+    debugMaterial: {fileID: 2100000, guid: e7f995b653ae8484dad49b4c052b42b2, type: 2}
+    digitCubePrefab: {fileID: 5405873812223872483, guid: 8f29c49045942af4baf4266812a705d2,
+      type: 3}
+    digitCylPb: {fileID: 7060318477051273613, guid: 06120e1f4d6ecb3419ca651a65076b07,
+      type: 3}
+    useWASD: 1
