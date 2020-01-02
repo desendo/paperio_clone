@@ -51,7 +51,7 @@ namespace PaperIOClone
 
                 if (zoneToCut.Facade.InsideHome) playerRootPoint = zoneToCut.Facade.Position;
 
-                if (!Helpers.Geometry.CheckIfInPolygon(border, playerRootPoint)) continue;
+                if (!Geometry.CheckIfInPolygon(border, playerRootPoint)) continue;
 
                 zoneToCut.SetBorder(border);
                 zoneToCut.View.UpdateMesh();
@@ -77,7 +77,7 @@ namespace PaperIOClone
             foreach (var otherLine in linesArray)
             {
                 if (otherLine.Facade.InsideHome) continue;
-                if (Helpers.Geometry.SegmentCrossesPolyline(
+                if (Geometry.SegmentCrossesPolyline(
                     segment,
                     otherLine.Points,
                     out var crossing))
@@ -89,7 +89,7 @@ namespace PaperIOClone
         {
             _signalBus.Fire(new SignalDie {killer = killer, victim = killedLine.Facade});
             killedLine.Facade.Die();
-            
+
             if (killedLine.Facade != killer)
                 killer.OnKill();
         }

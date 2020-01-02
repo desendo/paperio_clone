@@ -14,7 +14,7 @@ namespace PaperIOClone.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
-            
+
 
             Container.BindFactory<Vector3, Color, string, PlayerFacade, PlayerFacade.PlayerFactory>()
                 .FromPoolableMemoryPool<Vector3, Color, string, PlayerFacade, PlayerFacadePool>(poolBinder => poolBinder
@@ -38,7 +38,7 @@ namespace PaperIOClone.Installers
             Container.Bind<ScoresHandler>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<World>().AsSingle();
-            
+
             SignalsInstaller.Install(Container);
         }
 

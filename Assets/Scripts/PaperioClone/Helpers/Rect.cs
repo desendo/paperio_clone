@@ -4,10 +4,10 @@ namespace PaperIOClone.Helpers
 {
     public class Rect
     {
-        public float Top = 0;
-        public float Bottom = 0;
-        public float Left = 0;
-        public float Right = 0;
+        public float Bottom;
+        public float Left;
+        public float Right;
+        public float Top;
 
         public bool Overlaps(Rect rect, float overlap = 0)
         {
@@ -17,6 +17,7 @@ namespace PaperIOClone.Helpers
                 return false;
             return true;
         }
+
         public bool Overlaps(Vector2 point, float overlap = 0)
         {
             if (Left - overlap > point.x + overlap || point.x - overlap > Right + overlap)
@@ -25,6 +26,7 @@ namespace PaperIOClone.Helpers
                 return false;
             return true;
         }
+
         internal void InitWithPosition(Vector2 pos)
         {
             Left = pos.x;
@@ -52,7 +54,6 @@ namespace PaperIOClone.Helpers
             Top = 0;
             Left = 0;
             Right = 0;
-
         }
     }
 }

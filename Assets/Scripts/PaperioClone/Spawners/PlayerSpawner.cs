@@ -1,4 +1,5 @@
-﻿using PaperIOClone.Player;
+﻿using PaperIOClone.Helpers;
+using PaperIOClone.Player;
 using UnityEngine;
 
 namespace PaperIOClone.Spawners
@@ -14,7 +15,7 @@ namespace PaperIOClone.Spawners
 
         public void SpawnPlayer(Vector3 pos)
         {
-            var player = _playerFactory.Create(pos, Helpers.Geometry.GetRandomColor(), "Player");
+            var player = _playerFactory.Create(pos, Geometry.GetRandomColor(), "Player");
         }
     }
 }

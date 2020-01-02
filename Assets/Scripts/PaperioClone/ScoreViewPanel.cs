@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 namespace PaperIOClone
 {
     public class ScoreViewPanel : MonoBehaviour
     {
-        [SerializeField] TMP_Text text;
-        [SerializeField] Image back;
+        [SerializeField] private Image back;
+        [SerializeField] private TMP_Text text;
 
         public void SetValues(Color color, string singleScoreText)
         {

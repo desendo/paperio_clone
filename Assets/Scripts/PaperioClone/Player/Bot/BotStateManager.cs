@@ -14,14 +14,8 @@ namespace PaperIOClone.Player.Bot
 
     public class BotStateManager : ITickable, IFixedTickable, IInitializable
     {
-        private List<IBotState> _states;
         private IBotState _currentStateHandler;
-
-        [Inject]
-        public void Constructor(BotStateGrow grow, BotStateAttack attack, BotStateRetreat retreat)
-        {
-            _states = new List<IBotState> {grow, attack, retreat};
-        }
+        private List<IBotState> _states;
 
         private BotState CurrentState { get; set; } = BotState.None;
 
@@ -38,6 +32,12 @@ namespace PaperIOClone.Player.Bot
         public void Tick()
         {
             _currentStateHandler.Update();
+        }
+
+        [Inject]
+        public void Constructor(BotStateGrow grow, BotStateAttack attack, BotStateRetreat retreat)
+        {
+            _states = new List<IBotState> {grow, attack, retreat};
         }
 
         public void ChangeState(BotState state)

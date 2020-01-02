@@ -4,14 +4,15 @@ namespace PaperIOClone.Player.Bot.States
 {
     public class BotStateAttack : IBotState
     {
-        readonly GameSettingsInstaller.AISettings _aiSettings;
-        readonly TargetAngleState _angleState;
-        readonly BotSensor _botSensor;
-        readonly PlayerFacade _facade;
-        readonly BotAiSessionData _session;
-        readonly BotStateManager _stateManager;
+        private readonly GameSettingsInstaller.AISettings _aiSettings;
+        private readonly TargetAngleState _angleState;
+        private readonly BotSensor _botSensor;
+        private readonly PlayerFacade _facade;
+        private readonly BotAiSessionData _session;
+        private readonly BotStateManager _stateManager;
 
-        public BotStateAttack(GameSettingsInstaller.AISettings aiSettings, TargetAngleState angleState, BotSensor botSensor, PlayerFacade facade, BotAiSessionData session, BotStateManager stateManager)
+        public BotStateAttack(GameSettingsInstaller.AISettings aiSettings, TargetAngleState angleState,
+            BotSensor botSensor, PlayerFacade facade, BotAiSessionData session, BotStateManager stateManager)
         {
             _aiSettings = aiSettings;
             _angleState = angleState;

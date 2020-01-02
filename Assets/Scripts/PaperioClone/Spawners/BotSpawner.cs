@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PaperIOClone.Helpers;
 using PaperIOClone.Installers;
 using PaperIOClone.Player;
 using UnityEngine;
@@ -43,7 +44,7 @@ namespace PaperIOClone.Spawners
         public void SpawnBot(Vector3 pos)
         {
             var randomAiPresetIndex = Random.Range(0, _aISettings.presets.Length);
-            var player = _botFactor.Create(pos, Helpers.Geometry.GetRandomColor(), GetRandomName(),
+            var player = _botFactor.Create(pos, Geometry.GetRandomColor(), GetRandomName(),
                 _aISettings.presets[randomAiPresetIndex]);
         }
     }
