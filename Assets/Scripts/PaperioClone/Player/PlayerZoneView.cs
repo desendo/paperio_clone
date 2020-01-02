@@ -12,6 +12,7 @@ namespace PaperIOClone.Player
         private MeshRenderer _meshRenderer;
         private PlayerFacade _playerFacade;
         private Settings _settings;
+        [SerializeField] private GameObject playerZoneViewContainer;
 
         [Inject]
         public void Constructor(PlayerFacade playerFacade, Settings settings,
@@ -42,12 +43,12 @@ namespace PaperIOClone.Player
 
         public void Awake()
         {
-            gameObject.transform.localPosition = new Vector3(
-                gameObject.transform.localPosition.x,
-                gameObject.transform.localPosition.y,
+            playerZoneViewContainer.transform.localPosition = new Vector3(
+                playerZoneViewContainer.transform.localPosition.x,
+                playerZoneViewContainer.transform.localPosition.y,
                 _settings.height);
-            _meshRenderer = gameObject.GetComponent<MeshRenderer>();
-            _meshFilter = gameObject.GetComponent<MeshFilter>();
+            _meshRenderer = playerZoneViewContainer.GetComponent<MeshRenderer>();
+            _meshFilter = playerZoneViewContainer.GetComponent<MeshFilter>();
             _meshRenderer.material = _settings.zoneMaterial;
         }
 

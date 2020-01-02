@@ -1,7 +1,7 @@
 ﻿namespace PaperIOClone.Player.Bot
 {
-    public class TargetAngleState 
+    public class TargetAngleState : ITargetAngleState
     {
-        public float Angle;
+        public float Angle { get; set; }
     }
 }

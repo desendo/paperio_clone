@@ -17,9 +17,8 @@ namespace PaperIOClone.Installers
             Container.Bind<PlayerZoneService>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<BotStateManager>().AsSingle();
-            Container.Bind<TargetAngleState>().AsSingle();
-            Container.BindInterfacesTo<BotMoveHandler>().AsSingle();
-
+            Container.BindInterfacesAndSelfTo<TargetAngleState>().AsSingle();
+            Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();
 
             Container.Bind<BotStateGrow>().AsSingle();
             Container.Bind<BotStateAttack>().AsSingle();

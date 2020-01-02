@@ -32,9 +32,10 @@ namespace PaperIOClone
             get
             {
                 var botsCount = 0;
-                for (var i = 0; i < _registry.PlayerFacades.Count; i++)
-                    if (_registry.PlayerFacades[i].IsBot)
+                foreach (var player in _registry.PlayerFacades)
+                    if (player.IsBot)
                         botsCount++;
+
                 return botsCount;
             }
         }
@@ -43,11 +44,12 @@ namespace PaperIOClone
         {
             get
             {
-                var playerCount = 0;
-                for (var i = 0; i < _registry.PlayerFacades.Count; i++)
-                    if (!_registry.PlayerFacades[i].IsBot)
-                        playerCount++;
-                return playerCount;
+                var playersCount = 0;
+                foreach (var player in _registry.PlayerFacades)
+                    if (!player.IsBot)
+                        playersCount++;
+
+                return playersCount;
             }
         }
 

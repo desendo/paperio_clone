@@ -6,12 +6,12 @@ namespace PaperIOClone
 {
     public class InputHandler : ITickable
     {
+        private readonly AngleState _angleState;
         private readonly GameSettingsInstaller.DebugSettings _debugSettings;
-        private readonly InputState _inputState;
 
-        public InputHandler(InputState inputState, GameSettingsInstaller.DebugSettings debugSettings)
+        public InputHandler(AngleState angleState, GameSettingsInstaller.DebugSettings debugSettings)
         {
-            _inputState = inputState;
+            _angleState = angleState;
             _debugSettings = debugSettings;
         }
 
@@ -20,15 +20,14 @@ namespace PaperIOClone
             if (_debugSettings.useWASD)
             {
                 if (Input.GetKey(KeyCode.A))
-                    _inputState.TotalDelta += new Vector2(-1f, 0) * (Time.deltaTime * 100f);
+                    _angleState.TotalDelta += new Vector2(-1f, 0) * (Time.deltaTime * 10f);
                 else if (Input.GetKey(KeyCode.D))
-                    _inputState.TotalDelta += new Vector2(1f, 0) * (Time.deltaTime * 100f);
+                    _angleState.TotalDelta += new Vector2(1f, 0) * (Time.deltaTime * 10f);
                 else if (Input.GetKey(KeyCode.W))
-                    _inputState.TotalDelta += new Vector2(0f, 1f) * (Time.deltaTime * 100f);
+                    _angleState.TotalDelta += new Vector2(0f, 1f) * (Time.deltaTime * 10f);
                 else if (Input.GetKey(KeyCode.S))
-                    _inputState.TotalDelta += new Vector2(0f, -1f) * (Time.deltaTime * 100f);
-                else
-                    _inputState.TotalDelta = Vector2.zero;
+                    _angleState.TotalDelta += new Vector2(0f, -1f) * (Time.deltaTime * 10f);
+                _angleState.TotalDelta.Normalize();
             }
             else
             {
@@ -41,9 +40,9 @@ namespace PaperIOClone
         {
             var currentTouch = Input.touches[0];
             if (currentTouch.phase == TouchPhase.Moved)
-                _inputState.TotalDelta += currentTouch.deltaPosition;
+                _angleState.TotalDelta += currentTouch.deltaPosition;
             else if (currentTouch.phase != TouchPhase.Stationary)
-                _inputState.TotalDelta = Vector2.zero;
+                _angleState.TotalDelta.Normalize();
         }
     }
 }

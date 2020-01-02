@@ -5,7 +5,8 @@ namespace PaperIOClone.Player
     public class PlayerRunnerView : MonoBehaviour
     {
         private Transform _transform;
-        [SerializeField] private GameObject crown;
+        [SerializeField] private GameObject crownContainer;
+        [SerializeField] private GameObject playerRunnerViewContainer;
 
         public Vector3 LookDir
         {
@@ -22,18 +23,18 @@ namespace PaperIOClone.Player
 
         public Vector3 Position
         {
-            get => _transform.position;
-            set => _transform.position = value;
+            get => playerRunnerViewContainer.transform.position;
+            set => playerRunnerViewContainer.transform.position = value;
         }
 
         public void Awake()
         {
-            _transform = transform;
+            _transform = playerRunnerViewContainer.transform;
         }
 
         public void SetCrown(bool isOn)
         {
-            crown.SetActive(isOn);
+            crownContainer.SetActive(isOn);
         }
     }
 }

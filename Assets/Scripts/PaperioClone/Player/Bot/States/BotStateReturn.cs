@@ -7,10 +7,10 @@ namespace PaperIOClone.Player.Bot.States
     {
         private readonly GameSettingsInstaller.AISettings _aiSettings;
         private readonly TargetAngleState _angleState;
+        private readonly BotSensor _botSensor;
         private readonly PlayerFacade _facade;
         private readonly BotAiSessionData _session;
         private readonly BotStateManager _stateManager;
-        private readonly BotSensor _botSensor;
 
 
         public BotStateRetreat(GameSettingsInstaller.AISettings aiSettings, TargetAngleState angleState,
@@ -50,8 +50,6 @@ namespace PaperIOClone.Player.Bot.States
         private void PerformAiCalc()
         {
             var homeDir = _facade.LastHomePosition - (Vector2) _facade.Position;
-
-            Debug.DrawLine(_facade.Position, (Vector2) _facade.Position + homeDir, Color.black);
             var angle = Vector2.Angle(homeDir, _facade.LookDir) + Random.Range(-15f, 15f);
             _angleState.Angle = _facade.Rotation + angle * 0.5f;
 

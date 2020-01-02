@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using PaperIOClone.Helpers;
 using PaperIOClone.Installers;
-using PaperIOClone.Player;
 using UnityEngine;
 using Zenject;
 
-namespace PaperIOClone
+namespace PaperIOClone.Player
 {
     public class PlayerRunner : ITickable, IInitializable
     {
-        private  CrossingController _crossingController;
-        private  GameSettingsInstaller.DebugSettings _debugSettings;
+        private CrossingController _crossingController;
+        private GameSettingsInstaller.DebugSettings _debugSettings;
         private int _enterPointIndex;
         private Vector3 _entryPoint;
 
         private Vector3 _exitPoint;
         private int _exitPointIndex;
-        private  PlayerFacade _facade;
+        private PlayerFacade _facade;
 
-        private  PlayerLine _line;
+        private PlayerLine _line;
         private Vector3 _lookDir;
         private bool _oldInside;
 
@@ -27,37 +26,18 @@ namespace PaperIOClone
         private PlayersRegistry _playersRegistry;
         private Vector3 _position;
         private float _rotation;
-        private  Settings _settings;
+        private Settings _settings;
         private float _squaredDeltaPos;
         private PlayerRunnerView _view;
 
         private bool _wasOutsideHomeZone;
-        private  PlayerZone _zone;
-        private  PlayerZoneService _zoneService;
-        private  PlayerZoneView _zoneView;
-        [Inject]
-        public void Constructor(PlayerLine line, PlayerRunnerView view, PlayerZone zone, PlayerZoneView zoneView,
-            PlayerZoneService zoneService, CrossingController crossingController, PlayerFacade facade,
-            GameSettingsInstaller.DebugSettings debugSettings, Settings settings)
-        {
-            _line = line;
-            _view = view;
-            _zone = zone;
-            _zoneView = zoneView;
-            _zoneService = zoneService;
-            _crossingController = crossingController;
-            _facade = facade;
-            _debugSettings = debugSettings;
-            _settings = settings;
-        }
+        private PlayerZone _zone;
+        private PlayerZoneService _zoneService;
+        private PlayerZoneView _zoneView;
 
         public Vector2 LastInsideHomePosition { get; private set; }
 
-        public Vector3 LookDir
-        {
-            get => _view.LookDir;
-            private set => _view.LookDir = value;
-        }
+        public Vector3 LookDir => new Vector3(Mathf.Cos(Rotation * Mathf.Deg2Rad), Mathf.Sin(Rotation * Mathf.Deg2Rad));
 
         public float Rotation
         {
@@ -93,6 +73,21 @@ namespace PaperIOClone
             CheckHomeZoneCrossings();
         }
 
+        [Inject]
+        public void Constructor(PlayerLine line, PlayerRunnerView view, PlayerZone zone, PlayerZoneView zoneView,
+            PlayerZoneService zoneService, CrossingController crossingController, PlayerFacade facade,
+            GameSettingsInstaller.DebugSettings debugSettings, Settings settings)
+        {
+            _line = line;
+            _view = view;
+            _zone = zone;
+            _zoneView = zoneView;
+            _zoneService = zoneService;
+            _crossingController = crossingController;
+            _facade = facade;
+            _debugSettings = debugSettings;
+            _settings = settings;
+        }
 
         public void SetCrown(bool isOn)
         {
@@ -104,7 +99,6 @@ namespace PaperIOClone
             _oldPosition = Position;
             _oldInside = true;
             LastInsideHomePosition = Position;
-            LookDir = Vector2.right;
             Rotation = 0;
         }
 
@@ -158,10 +152,7 @@ namespace PaperIOClone
                 _zone.SetBorder(modifiedBorder);
 
                 _line.AddDot(crossPoint);
-                if (isInside)
-                {
-                    HandleHomeZoneEnter();
-                }
+                if (isInside) HandleHomeZoneEnter();
             }
             else if (!isInside)
             {

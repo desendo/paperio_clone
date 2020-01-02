@@ -11,9 +11,10 @@ namespace PaperIOClone.Installers
             Container.BindInterfacesAndSelfTo<PlayerLine>().AsSingle();
             Container.Bind<PlayerZone>().AsSingle();
             Container.Bind<PlayerZoneService>().AsSingle();
-            Container.Bind<InputState>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AngleState>().AsSingle();
             Container.BindInterfacesTo<InputHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();
+            Container.BindInterfacesTo<PlayerCameraAligner>().AsSingle();
         }
     }
 }
