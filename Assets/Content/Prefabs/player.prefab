@@ -257,6 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 462554148b6d0594889b28e1c6844e65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crownContainer: {fileID: 7613060938863667305}
 --- !u!114 &7733257868296447831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,7 +270,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b381cea6a566bb43812a491fef67e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crownContainer: {fileID: 7613060938863667305}
   playerRunnerViewContainer: {fileID: 4241088911870103117}
 --- !u!114 &1257705725185220271
 MonoBehaviour:

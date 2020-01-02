@@ -1,26 +1,19 @@
 ﻿using System.Collections.Generic;
-using PaperIOClone.Installers;
 using PaperIOClone.Player;
 using ProceduralToolkit;
 using ProceduralToolkit.ClipperLib;
 using UnityEngine;
-using Zenject;
 using Geometry = PaperIOClone.Helpers.Geometry;
 
 namespace PaperIOClone
 {
     public class CrossingController
     {
-        private readonly GameSettingsInstaller.DebugSettings _debugSettings;
         private readonly PlayersRegistry _playersRegistry;
-        private readonly SignalBus _signalBus;
 
-        public CrossingController(PlayersRegistry playersRegistry, GameSettingsInstaller.DebugSettings debugSettings,
-            SignalBus signalBus)
+        public CrossingController(PlayersRegistry playersRegistry)
         {
             _playersRegistry = playersRegistry;
-            _debugSettings = debugSettings;
-            _signalBus = signalBus;
         }
 
 
@@ -80,14 +73,13 @@ namespace PaperIOClone
                 if (Geometry.SegmentCrossesPolyline(
                     segment,
                     otherLine.Points,
-                    out var crossing))
+                    out var crossing, false))
                     HandleCutOff(player, otherLine);
             }
         }
 
         private void HandleCutOff(PlayerFacade killer, PlayerLine killedLine)
         {
-            _signalBus.Fire(new SignalDie {killer = killer, victim = killedLine.Facade});
             killedLine.Facade.Die();
 
             if (killedLine.Facade != killer)

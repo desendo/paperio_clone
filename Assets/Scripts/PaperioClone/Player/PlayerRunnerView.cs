@@ -5,7 +5,6 @@ namespace PaperIOClone.Player
     public class PlayerRunnerView : MonoBehaviour
     {
         private Transform _transform;
-        [SerializeField] private GameObject crownContainer;
         [SerializeField] private GameObject playerRunnerViewContainer;
 
         public Vector3 LookDir
@@ -17,8 +16,12 @@ namespace PaperIOClone.Player
         public float Rotation
         {
             get => _transform.rotation.eulerAngles.z;
-            set => _transform.eulerAngles =
-                new Vector3(_transform.rotation.eulerAngles.x, _transform.rotation.eulerAngles.y, value);
+            set
+            {
+                Quaternion rotation;
+                _transform.eulerAngles =
+                    new Vector3((rotation = _transform.rotation).eulerAngles.x, rotation.eulerAngles.y, value);
+            }
         }
 
         public Vector3 Position
@@ -30,11 +33,6 @@ namespace PaperIOClone.Player
         public void Awake()
         {
             _transform = playerRunnerViewContainer.transform;
-        }
-
-        public void SetCrown(bool isOn)
-        {
-            crownContainer.SetActive(isOn);
         }
     }
 }

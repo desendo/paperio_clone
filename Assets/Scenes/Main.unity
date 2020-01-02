@@ -180,8 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30296bf333932a643b9424e9223fa47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 433435707}
   back: {fileID: 103997368}
+  text: {fileID: 433435707}
 --- !u!1 &12535742
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,8 +242,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30296bf333932a643b9424e9223fa47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 950202358}
   back: {fileID: 888455373}
+  text: {fileID: 950202358}
 --- !u!1 &38498474
 GameObject:
   m_ObjectHideFlags: 0
@@ -1098,8 +1098,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30296bf333932a643b9424e9223fa47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 282806192}
   back: {fileID: 109088807}
+  text: {fileID: 282806192}
 --- !u!1 &910537948
 GameObject:
   m_ObjectHideFlags: 0
@@ -1637,8 +1637,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30296bf333932a643b9424e9223fa47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 1825031821}
   back: {fileID: 1742929350}
+  text: {fileID: 1825031821}
 --- !u!1 &1236431860
 GameObject:
   m_ObjectHideFlags: 0
@@ -2440,13 +2440,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d810020235cc6498b0f1494cc8213b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kills: {fileID: 1236431861}
   panels:
   - {fileID: 12535745}
   - {fileID: 11596351}
   - {fileID: 902381134}
   - {fileID: 1233084141}
   scoresContainer: {fileID: 912786188}
-  kills: {fileID: 1236431861}
 --- !u!4 &1828825117
 Transform:
   m_ObjectHideFlags: 0

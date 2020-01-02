@@ -98,14 +98,6 @@ namespace PaperIOClone.Helpers
                 Random.value);
         }
 
-        public static bool CheckIfRectsOverlaps(Vector2 lowerLeft1, Vector2 upperRight1, Vector2 lowerLeft2,
-            Vector2 upperRight2)
-        {
-            var overlaps = false;
-
-            return overlaps;
-        }
-
         internal static int GetNearestBorderPointTo(List<Vector2> borderPoints, Vector3 position)
         {
             var sqaredDist = float.PositiveInfinity;
@@ -129,18 +121,20 @@ namespace PaperIOClone.Helpers
         }
 
         public static bool SegmentCrossesPolyline(
-            Vector2 Point1, Vector2 Point2,
+            Vector2 point1, Vector2 point2,
             List<Vector2> polyline,
-            out Vector2 crossing, List<int> polylineIndexPair)
+            out Vector2 crossing, List<int> polylineIndexPair, bool loop = true)
         {
             crossing = Vector2.zero;
             if (polyline == null || polyline.Count < 2) return false;
             for (var i = 0; i < polyline.Count; i++)
             {
                 var second = i + 1;
-                if (i + 1 == polyline.Count)
+                if (i + 1 == polyline.Count && loop)
                     second = 0;
-                if (CheckIfTwoSegmentsIntersects(Point1, Point2, polyline[i], polyline[second], out crossing))
+                else if(i + 1 == polyline.Count)
+                    continue;
+                if (CheckIfTwoSegmentsIntersects(point1, point2, polyline[i], polyline[second], out crossing))
                 {
                     if (polylineIndexPair != null)
                     {
@@ -158,9 +152,9 @@ namespace PaperIOClone.Helpers
             return false;
         }
 
-        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, out Vector2 crossing)
+        public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, out Vector2 crossing, bool loop)
         {
-            return SegmentCrossesPolyline(segment[0], segment[1], polyline, out crossing, null);
+            return SegmentCrossesPolyline(segment[0], segment[1], polyline, out crossing, null, loop);
         }
 
         public static bool SegmentCrossesPolyline(Vector2[] segment, List<Vector2> polyline, out Vector2 crossing,

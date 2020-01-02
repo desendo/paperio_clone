@@ -10,12 +10,10 @@ namespace PaperIOClone
     {
         private readonly GuiHandler _guiHandler;
         private readonly PlayersRegistry _playersRegistry;
-        private readonly SignalBus _signalBus;
         private readonly World _world;
 
         public ScoresHandler(SignalBus signalBus, World world, PlayersRegistry playersRegistry, GuiHandler guiHandler)
         {
-            _signalBus = signalBus;
             _world = world;
             _playersRegistry = playersRegistry;
             _guiHandler = guiHandler;

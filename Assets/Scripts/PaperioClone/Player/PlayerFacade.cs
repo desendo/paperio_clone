@@ -11,6 +11,8 @@ namespace PaperIOClone.Player
         private IMemoryPool _pool;
         private PlayersRegistry _registry;
         private PlayerRunner _runner;
+        private SignalBus _signalBus;
+        [SerializeField] private GameObject crownContainer;
         public BotAiPreset Preset { get; private set; }
 
         public string Name { get; private set; }
@@ -18,8 +20,6 @@ namespace PaperIOClone.Player
         public Color MainColor { get; private set; }
 
         public bool IsBot => Preset != null;
-
-        public float ZoneArea => Zone.GetArea();
 
         public PlayerZone Zone { get; private set; }
 
@@ -59,13 +59,17 @@ namespace PaperIOClone.Player
             _registry.RemovePlayer(this);
         }
 
+
         [Inject]
         public void Construct(
             PlayerRunner player,
             PlayersRegistry playersRegistry,
             PlayerLine line,
-            PlayerZone zone)
+            PlayerZone zone,
+            SignalBus signalBus
+        )
         {
+            _signalBus = signalBus;
             _runner = player;
             _registry = playersRegistry;
             Zone = zone;
@@ -74,7 +78,7 @@ namespace PaperIOClone.Player
 
         public void SetCrown(bool isOn)
         {
-            _runner.SetCrown(isOn);
+            crownContainer.SetActive(isOn);
         }
 
         private void OnSpawn(Vector3 position, Color color, string playerName, IMemoryPool pool)
@@ -91,6 +95,7 @@ namespace PaperIOClone.Player
 
         public void Die()
         {
+            _signalBus.Fire(new SignalDie());
             _pool.Despawn(this);
         }
 

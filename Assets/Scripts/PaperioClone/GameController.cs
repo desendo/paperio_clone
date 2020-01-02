@@ -1,7 +1,9 @@
 ﻿using System;
+using PaperIOClone.Helpers;
 using PaperIOClone.Player;
 using PaperIOClone.Spawners;
 using UniRx;
+using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
@@ -59,6 +61,7 @@ namespace PaperIOClone
             {
                 if (CurrentBotsCount > _settings.maximumBots - 1) return;
                 var randomPosition = Random.insideUnitCircle * (_world.Radius - _playerZoneSettings.initialRadius);
+                if (InOtherZone(randomPosition)) return;
                 _botSpawner.SpawnBot(randomPosition);
             });
 
@@ -66,8 +69,21 @@ namespace PaperIOClone
             {
                 if (CurrentPlayerCount > 0) return;
                 var randomPosition = Random.insideUnitCircle * (_world.Radius - _playerZoneSettings.initialRadius);
+                if (InOtherZone(randomPosition)) return;
                 _playerSpawner.SpawnPlayer(randomPosition);
             });
+        }
+
+        private bool InOtherZone(Vector2 pos)
+        {
+            for (var i = 0; i < _registry.Zones.Count; i++)
+            {
+                var zone = _registry.Zones[i];
+                if (Geometry.CheckIfInPolygon(zone.BorderPoints, pos))
+                    return true;
+            }
+
+            return false;
         }
 
         [Serializable]

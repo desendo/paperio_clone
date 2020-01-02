@@ -43,12 +43,11 @@ MonoBehaviour:
   playerMoveHandlerSettings:
     moveSpeed: 0.2
     rotationEpslon: 0.09
-    swipeDeadZoneLenght: 0.16
     turnSpeed: 0.28
   playerRunnerSettings:
-    unitPerPoint: 0
+    unitPerPoint: 1.5
   playerZoneSettings:
-    initialDotsCount: 17
+    initialDotsCount: 11
     initialRadius: 4
   playerZoneViewSettings:
     height: -0.01

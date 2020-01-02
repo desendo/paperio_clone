@@ -70,7 +70,7 @@ namespace PaperIOClone.Player
 
         public void Tick()
         {
-            CheckHomeZoneCrossings();
+            CheckCrossings();
         }
 
         [Inject]
@@ -89,11 +89,6 @@ namespace PaperIOClone.Player
             _settings = settings;
         }
 
-        public void SetCrown(bool isOn)
-        {
-            _view.SetCrown(isOn);
-        }
-
         public void OnSpawn()
         {
             _oldPosition = Position;
@@ -102,24 +97,22 @@ namespace PaperIOClone.Player
             Rotation = 0;
         }
 
-        private void CheckHomeZoneCrossings()
+        private void CheckCrossings()
         {
             var deltaPosition = (Position - _oldPosition).magnitude;
 
-            if (deltaPosition > _settings.unitPerPoint)
-            {
-                CheckIfZoneCrossing();
-                CheckIfLineCrossing();
-                _oldPosition = Position;
-            }
+            if (!(deltaPosition > _settings.unitPerPoint)) return;
+            CheckHomeZoneCrossing();
+            CheckLinesCrossing();
+            _oldPosition = Position;
         }
 
-        private void CheckIfLineCrossing()
+        private void CheckLinesCrossing()
         {
             _crossingController.CheckLineCrossings(_oldPosition, Position, _facade);
         }
 
-        private void CheckIfZoneCrossing()
+        private void CheckHomeZoneCrossing()
         {
             var isInside = InsideHome; //кешируем 
             var borderCrossingEdgeIndexes = new List<int>();
@@ -129,11 +122,10 @@ namespace PaperIOClone.Player
 
             if (_oldInside != isInside && !isCrossing)
             {
-                Debug.LogError(_facade.Name + " переход без фиксации пересечения. возможно ошибка построения меша");
-                Debug.LogError(_facade.Name + " внутри: " + InsideHome);
-                Geometry.PlaceDebugLine(_zone.BorderPoints, Geometry.GetRandomColor(), _debugSettings.digitCubePrefab,
-                    _facade.Name + " dd", "", 0f);
-                Debug.Break();
+                Debug.LogWarning(_facade.Name + " переход без фиксации пересечения. возможно ошибка построения меша");
+                Debug.LogWarning(_facade.Name + " внутри: " + InsideHome);
+
+                _facade.Die(); //ошибка у бота. убиваем.
             }
 
             if (_oldInside != isInside && isCrossing)
